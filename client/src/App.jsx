@@ -1,12 +1,15 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 
+// Components
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
 import WhyChoose from "./components/WhyChoose";
 import Footer from "./components/Footer";
 
+// Pages
 import Dashboard from "./components/Dashboard";
 import Inventory from "./components/Inventory";
 import Sales from "./components/Sales";
@@ -20,11 +23,9 @@ import Register from "./components/Register";
 function Home() {
   return (
     <>
-      <Navbar />
       <Hero />
       <Features />
       <WhyChoose />
-      <Footer />
     </>
   );
 }
@@ -35,25 +36,77 @@ function App() {
       <Navbar />
 
       <Routes>
-        <Route path="/" element={
-          <>
-            <Hero />
-            <Features />
-            <WhyChoose />
-            <Footer />
-          </>
-        } />
-
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/sales" element={<Sales />} />
-        <Route path="/customers" element={<Customers />} />
-        <Route path="/invoices" element={<Invoices />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/settings" element={<Settings />} />
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/inventory"
+          element={
+            <ProtectedRoute>
+              <Inventory />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/sales"
+          element={
+            <ProtectedRoute>
+              <Sales />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/customers"
+          element={
+            <ProtectedRoute>
+              <Customers />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/invoices"
+          element={
+            <ProtectedRoute>
+              <Invoices />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <Reports />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
+
+      <Footer />
     </>
   );
 }

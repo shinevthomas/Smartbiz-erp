@@ -1,78 +1,52 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
 
-const Product = require("./models/Product");
+import productRoutes from "./routes/productRoutes.js";
+import saleRoutes from "./routes/saleRoutes.js";
+import customerRoutes from "./routes/customerRoutes.js";
+import invoiceRoutes from "./routes/invoiceRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
+import settingsRoutes from "./routes/settingsRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+dotenv.config();
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
+
+// Routes
+app.use("/api/products", productRoutes);
+app.use("/api/sales", saleRoutes);
+app.use("/api/customers", customerRoutes);
+app.use("/api/invoices", invoiceRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+
+
+// Test Route
+app.get("/", (req, res) => {
+  res.send("SmartBiz ERP Server Running...");
+});
 
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.log(err));
+  .then(() => {
+    console.log("✅ MongoDB Connected");
 
-// GET Products
-app.get("/products", async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+    const PORT = process.env.PORT || 5000;
 
-// ADD Product
-app.post("/products", async (req, res) => {
-  try {
-    const product = new Product({
-      name: req.body.name,
-      price: req.body.price,
-      stock: req.body.stock,
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
     });
-
-    const savedProduct = await product.save();
-    res.json(savedProduct);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// DELETE Product
-app.delete("/products/:id", async (req, res) => {
-  try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.json({ message: "Product deleted" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// UPDATE Product
-app.put("/products/:id", async (req, res) => {
-  try {
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      {
-        name: req.body.name,
-        price: req.body.price,
-        stock: req.body.stock,
-      },
-      { new: true }
-    );
-
-    res.json(updatedProduct);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB Connection Error:", err);
+  });

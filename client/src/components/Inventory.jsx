@@ -20,19 +20,19 @@ function Inventory() {
     fetchProducts();
   }, []);
 
-  const fetchProducts = () => {
-    setLoading(true);
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
 
-    axios
-      .get("http://localhost:5000/products")
-      .then((res) => {
-        setProducts(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+      const res = await axios.get("http://localhost:5000/api/products");
+
+      setProducts(res.data);
+    } catch (err) {
+      console.log(err);
+      alert("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -42,73 +42,64 @@ function Inventory() {
     });
   };
 
-  const saveProduct = () => {
-    if (
-      !newProduct.name ||
-      !newProduct.price ||
-      !newProduct.stock
-    ) {
+  const saveProduct = async () => {
+    if (!newProduct.name || !newProduct.price || !newProduct.stock) {
       alert("Please fill all fields");
       return;
     }
 
-    if (editingId === null) {
-      axios
-        .post("http://localhost:5000/products", newProduct)
-        .then(() => {
-          fetchProducts();
-
-          alert("✅ Product Added Successfully");
-
-          setNewProduct({
-            name: "",
-            price: "",
-            stock: "",
-          });
-
-          setShowForm(false);
-        })
-        .catch((err) => console.log(err));
-    } else {
-      axios
-        .put(
-          `http://localhost:5000/products/${editingId}`,
+    try {
+      if (editingId === null) {
+        await axios.post(
+          "http://localhost:5000/api/products",
           newProduct
-        )
-        .then(() => {
-          fetchProducts();
+        );
 
-          alert("✅ Product Updated Successfully");
+        alert("✅ Product Added Successfully");
+      } else {
+        await axios.put(
+          `http://localhost:5000/api/products/${editingId}`,
+          newProduct
+        );
 
-          setEditingId(null);
+        alert("✅ Product Updated Successfully");
+      }
 
-          setNewProduct({
-            name: "",
-            price: "",
-            stock: "",
-          });
+      setNewProduct({
+        name: "",
+        price: "",
+        stock: "",
+      });
 
-          setShowForm(false);
-        })
-        .catch((err) => console.log(err));
+      setEditingId(null);
+      setShowForm(false);
+
+      fetchProducts();
+    } catch (err) {
+      console.log(err);
+      alert("Something went wrong");
     }
   };
 
-  const deleteProduct = (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?"))
-      return;
+  const deleteProduct = async (id) => {
+    if (!window.confirm("Delete this product?")) return;
 
-    axios
-      .delete(`http://localhost:5000/products/${id}`)
-      .then(() => {
-        fetchProducts();
-        alert("🗑️ Product Deleted Successfully");
-      })
-      .catch((err) => console.log(err));
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/products/${id}`
+      );
+
+      alert("🗑 Product Deleted Successfully");
+
+      fetchProducts();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const editProduct = (product) => {
     setEditingId(product._id);
+
     setShowForm(true);
 
     setNewProduct({
@@ -131,14 +122,15 @@ function Inventory() {
   if (loading) {
     return (
       <div className="inventory-container">
-        <h2 style={{ textAlign: "center" }}>Loading Products...</h2>
+        <h2 style={{ textAlign: "center" }}>
+          Loading Products...
+        </h2>
       </div>
     );
   }
 
   return (
     <div className="inventory-container">
-
       <div className="inventory-header">
         <h1>Inventory Management</h1>
 
@@ -163,8 +155,8 @@ function Inventory() {
       </div>
 
       <input
-        type="text"
         className="search-box"
+        type="text"
         placeholder="Search by Name, Price or Stock..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -176,7 +168,6 @@ function Inventory() {
 
       {showForm && (
         <div className="form-container">
-
           <input
             type="text"
             name="name"
@@ -204,12 +195,10 @@ function Inventory() {
           <button onClick={saveProduct}>
             {editingId ? "Update Product" : "Save Product"}
           </button>
-
         </div>
       )}
 
       <table className="inventory-table">
-
         <thead>
           <tr>
             <th>#</th>
@@ -222,11 +211,9 @@ function Inventory() {
         </thead>
 
         <tbody>
-
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product, index) => (
               <tr key={product._id}>
-
                 <td>{index + 1}</td>
 
                 <td>{product.name}</td>
@@ -238,11 +225,12 @@ function Inventory() {
                 <td>{product.stock}</td>
 
                 <td>
-                  {new Date(product.createdAt).toLocaleDateString()}
+                  {product.createdAt
+                    ? new Date(product.createdAt).toLocaleDateString()
+                    : "-"}
                 </td>
 
                 <td>
-
                   <button
                     className="edit-btn"
                     onClick={() => editProduct(product)}
@@ -256,9 +244,7 @@ function Inventory() {
                   >
                     Delete
                   </button>
-
                 </td>
-
               </tr>
             ))
           ) : (
@@ -275,11 +261,8 @@ function Inventory() {
               </td>
             </tr>
           )}
-
         </tbody>
-
       </table>
-
     </div>
   );
 }

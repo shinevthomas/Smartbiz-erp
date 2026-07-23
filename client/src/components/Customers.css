@@ -1,0 +1,107 @@
+.customers-container {
+  width: 85%;
+  margin: 40px auto;
+}
+
+.customers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.customers-header h1 {
+  font-size: 60px;
+  font-weight: bold;
+}
+
+.add-btn {
+  background: royalblue;
+  color: white;
+  border: none;
+  padding: 14px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.search-box {
+  display: block;
+  margin: 20px auto;
+  width: 300px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.customer-count {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.form-container {
+  width: 450px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,.15);
+}
+
+.form-container input,
+.form-container textarea {
+  padding: 12px;
+  font-size: 16px;
+}
+
+.form-container button {
+  background: royalblue;
+  color: white;
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.customers-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,.1);
+}
+
+.customers-table thead {
+  background: royalblue;
+  color: white;
+}
+
+.customers-table th,
+.customers-table td {
+  padding: 18px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.edit-btn {
+  background: orange;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-right: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: crimson;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
