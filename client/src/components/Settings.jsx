@@ -1,158 +1,319 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 import "./Settings.css";
 
 function Settings() {
-  const [saved, setSaved] = useState(false);
 
-  const [settings, setSettings] = useState({
-    company: "",
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const [profile, setProfile] = useState({
+    name: "",
     email: "",
+    companyName: "",
     phone: "",
     address: "",
-    currency: "Indian Rupee (₹)",
-    notifications: true,
-    darkMode: false,
+    currency: "INR",
+  });
+
+  const [password, setPassword] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   useEffect(() => {
-    const storedSettings = localStorage.getItem("erpSettings");
-
-    if (storedSettings) {
-      const data = JSON.parse(storedSettings);
-
-      setSettings(data);
-
-      if (data.darkMode) {
-        document.body.classList.add("dark-theme");
-      } else {
-        document.body.classList.remove("dark-theme");
-      }
-    }
+    fetchProfile();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const fetchProfile = async () => {
 
-    const updatedSettings = {
-      ...settings,
-      [name]: type === "checkbox" ? checked : value,
-    };
-
-    setSettings(updatedSettings);
-
-    if (name === "darkMode") {
-      if (checked) {
-        document.body.classList.add("dark-theme");
-      } else {
-        document.body.classList.remove("dark-theme");
-      }
-    }
-  };
-
-  const saveSettings = () => {
     try {
-      localStorage.setItem(
-        "erpSettings",
-        JSON.stringify(settings)
+
+      const res = await axios.get(
+        `http://localhost:5000/api/users/${user._id}`
       );
 
-      setSaved(true);
+      setProfile(res.data);
 
-      setTimeout(() => {
-        setSaved(false);
-      }, 3000);
-    } catch (error) {
-      console.log(error);
-      alert("Failed to save settings");
+    } catch (err) {
+
+      toast.error("Unable to load profile");
+
     }
+
+  };
+
+  const handleProfileChange = (e) => {
+
+    setProfile({
+      ...profile,
+      [e.target.name]: e.target.value,
+    });
+
+  };
+
+  const handlePasswordChange = (e) => {
+
+    setPassword({
+      ...password,
+      [e.target.name]: e.target.value,
+    });
+
+  };
+
+  const saveProfile = async () => {
+
+    try {
+
+      await axios.put(
+        `http://localhost:5000/api/users/${user._id}`,
+        profile
+      );
+
+      toast.success("Profile Updated Successfully");
+
+    } catch (err) {
+
+      toast.error("Failed to update profile");
+
+    }
+
+  };
+
+  const changePassword = async () => {
+
+    if (password.newPassword !== password.confirmPassword) {
+
+      toast.error("Passwords do not match");
+
+      return;
+
+    }
+
+    try {
+
+      await axios.put(
+        `http://localhost:5000/api/users/change-password/${user._id}`,
+        {
+          oldPassword: password.oldPassword,
+          newPassword: password.newPassword,
+        }
+      );
+
+      toast.success("Password Changed");
+
+      setPassword({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+    } catch (err) {
+
+      toast.error(
+        err.response?.data?.message || "Password change failed"
+      );
+
+    }
+
   };
 
   return (
-    <div className="settings-container">
-      <div className="settings-card">
-        <h1>⚙ Settings</h1>
 
-        {saved && (
-          <div className="success-message">
-            ✅ Settings Saved Successfully
+    <div className="settings-page">
+
+      <h1 className="settings-title">
+
+        ⚙ Settings
+
+      </h1>
+
+      <div className="settings-grid">
+
+        {/* COMPANY INFORMATION */}
+
+        <div className="settings-card">
+
+          <h2>🏢 Company Information</h2>
+
+          <div className="form-group">
+
+            <label>Company Name</label>
+
+            <input
+              type="text"
+              name="companyName"
+              value={profile.companyName}
+              onChange={handleProfileChange}
+            />
+
           </div>
-        )}
 
-        <label>Company Name</label>
-        <input
-          type="text"
-          name="company"
-          value={settings.company}
-          onChange={handleChange}
-        />
+          <div className="form-group">
 
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={settings.email}
-          onChange={handleChange}
-        />
+            <label>Business Email</label>
 
-        <label>Phone</label>
-        <input
-          type="text"
-          name="phone"
-          value={settings.phone}
-          onChange={handleChange}
-        />
-
-        <label>Address</label>
-        <textarea
-          rows="4"
-          name="address"
-          value={settings.address}
-          onChange={handleChange}
-        />
-
-        <label>Currency</label>
-        <select
-          name="currency"
-          value={settings.currency}
-          onChange={handleChange}
-        >
-          <option>Indian Rupee (₹)</option>
-          <option>US Dollar ($)</option>
-          <option>Euro (€)</option>
-          <option>Pound (£)</option>
-        </select>
-
-        <div className="checkbox-group">
-          <label className="checkbox-label">
             <input
-              type="checkbox"
-              name="notifications"
-              checked={settings.notifications}
-              onChange={handleChange}
+              type="email"
+              name="email"
+              value={profile.email}
+              onChange={handleProfileChange}
             />
-            Enable Notifications
-          </label>
 
-          <label className="checkbox-label">
+          </div>
+
+          <div className="form-group">
+
+            <label>Phone Number</label>
+
             <input
-              type="checkbox"
-              name="darkMode"
-              checked={settings.darkMode}
-              onChange={handleChange}
+              type="text"
+              name="phone"
+              value={profile.phone}
+              onChange={handleProfileChange}
             />
-            Enable Dark Mode
-          </label>
+
+          </div>
+
+          <div className="form-group">
+
+            <label>Address</label>
+
+            <textarea
+              rows="3"
+              name="address"
+              value={profile.address}
+              onChange={handleProfileChange}
+            />
+
+          </div>
+
+          <div className="form-group">
+
+            <label>Currency</label>
+
+            <select
+              name="currency"
+              value={profile.currency}
+              onChange={handleProfileChange}
+            >
+              <option value="INR">Indian Rupee (₹)</option>
+              <option value="USD">US Dollar ($)</option>
+              <option value="EUR">Euro (€)</option>
+            </select>
+
+          </div>
+
+          <button
+            className="save-btn"
+            onClick={saveProfile}
+          >
+            💾 Save Company Details
+          </button>
+
+        </div>
+                {/* USER PROFILE */}
+
+        <div className="settings-card">
+
+          <h2>👤 User Profile</h2>
+
+          <div className="form-group">
+
+            <label>Full Name</label>
+
+            <input
+              type="text"
+              name="name"
+              value={profile.name}
+              onChange={handleProfileChange}
+            />
+
+          </div>
+
+          <div className="form-group">
+
+            <label>Email Address</label>
+
+            <input
+              type="email"
+              name="email"
+              value={profile.email}
+              onChange={handleProfileChange}
+            />
+
+          </div>
+
+          <button
+            className="save-btn"
+            onClick={saveProfile}
+          >
+            Save Profile
+          </button>
+
         </div>
 
-        <button
-          className="save-btn"
-          onClick={saveSettings}
-        >
-          Save Settings
-        </button>
+        {/* CHANGE PASSWORD */}
+
+        <div className="settings-card">
+
+          <h2>🔒 Change Password</h2>
+
+          <div className="form-group">
+
+            <label>Current Password</label>
+
+            <input
+              type="password"
+              name="oldPassword"
+              value={password.oldPassword}
+              onChange={handlePasswordChange}
+            />
+
+          </div>
+
+          <div className="form-group">
+
+            <label>New Password</label>
+
+            <input
+              type="password"
+              name="newPassword"
+              value={password.newPassword}
+              onChange={handlePasswordChange}
+            />
+
+          </div>
+
+          <div className="form-group">
+
+            <label>Confirm Password</label>
+
+            <input
+              type="password"
+              name="confirmPassword"
+              value={password.confirmPassword}
+              onChange={handlePasswordChange}
+            />
+
+          </div>
+
+          <button
+            className="password-btn"
+            onClick={changePassword}
+          >
+            Update Password
+          </button>
+
+        </div>
+
       </div>
+
     </div>
+
   );
+
 }
 
 export default Settings;

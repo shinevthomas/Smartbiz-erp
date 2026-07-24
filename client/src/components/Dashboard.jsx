@@ -1,145 +1,147 @@
+import "./Dashboard.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./Dashboard.css";
+import { toast } from "react-toastify";
 
 function Dashboard() {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
-
   const [stats, setStats] = useState({
     totalProducts: 0,
+    totalRevenue: 0,
     totalCustomers: 0,
     totalSales: 0,
-    totalRevenue: 0,
   });
 
-  useEffect(() => {
-    const loggedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(loggedUser);
+  const user = JSON.parse(localStorage.getItem("user"));
 
+  useEffect(() => {
     fetchDashboard();
   }, []);
 
   const fetchDashboard = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/dashboard");
+      const res = await axios.get(
+        "http://localhost:5000/api/dashboard"
+      );
+
       setStats(res.data);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
-  };
+  }
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm(
-      "Are you sure you want to logout?"
-    );
+  const logout = () => {
 
-    if (!confirmLogout) return;
+  toast.success("Logout Successful!");
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 
-    alert("Logged out successfully!");
-
+  setTimeout(() => {
     navigate("/login");
-  };
+  }, 1000);
+
+}
+  
 
   return (
-    <div className="dashboard">
+    <div className="dashboard-page">
 
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <h2>SmartBiz ERP</h2>
+      <h1 className="dashboard-title">
+        Dashboard
+      </h1>
 
-        {user && (
-          <div className="user-info">
-            <p className="user-name">
-              👋 Welcome,
-              <br />
-              {user.name}
-            </p>
-          </div>
-        )}
+      {/* Statistics */}
 
-        <hr />
+      <div className="stats-grid">
 
-        <ul>
-          <li>
-            <Link className="menu-link" to="/dashboard">
-              🏠 Dashboard
-            </Link>
-          </li>
-
-          <li>
-            <Link className="menu-link" to="/inventory">
-              📦 Inventory
-            </Link>
-          </li>
-
-          <li>
-            <Link className="menu-link" to="/sales">
-              💰 Sales
-            </Link>
-          </li>
-
-          <li>
-            <Link className="menu-link" to="/customers">
-              👥 Customers
-            </Link>
-          </li>
-
-          <li>
-            <Link className="menu-link" to="/invoices">
-              🧾 Invoices
-            </Link>
-          </li>
-
-          <li>
-            <Link className="menu-link" to="/reports">
-              📊 Reports
-            </Link>
-          </li>
-
-          <li>
-            <Link className="menu-link" to="/settings">
-              ⚙️ Settings
-            </Link>
-          </li>
-        </ul>
-
-        <button className="logout-btn" onClick={handleLogout}>
-          🚪 Logout
-        </button>
-      </aside>
-
-      {/* Main Content */}
-      <main className="content">
-        <h1>Dashboard</h1>
-
-        <div className="cards">
-          <div className="card">
-            <h3>Total Products</h3>
-            <h2>{stats.totalProducts}</h2>
-          </div>
-
-          <div className="card">
-            <h3>Total Revenue</h3>
-            <h2>₹{stats.totalRevenue.toLocaleString("en-IN")}</h2>
-          </div>
-
-          <div className="card">
-            <h3>Total Customers</h3>
-            <h2>{stats.totalCustomers}</h2>
-          </div>
-
-          <div className="card">
-            <h3>Total Sales</h3>
-            <h2>{stats.totalSales}</h2>
-          </div>
+        <div className="card">
+          <h3>Total Products</h3>
+          <h2>{stats.totalProducts}</h2>
         </div>
-      </main>
+
+        <div className="card">
+          <h3>Total Revenue</h3>
+          <h2>₹{stats.totalRevenue.toLocaleString()}</h2>
+        </div>
+
+        <div className="card">
+          <h3>Total Customers</h3>
+          <h2>{stats.totalCustomers}</h2>
+        </div>
+
+        <div className="card">
+          <h3>Total Sales</h3>
+          <h2>{stats.totalSales}</h2>
+        </div>
+
+      </div>
+
+      {/* Bottom Section */}
+
+      <div className="dashboard-bottom">
+
+        {/* Recent Activity */}
+
+        <div className="recent-card">
+
+          <h2>Recent Activity</h2>
+
+          <ul>
+            <li>📦 Product Added</li>
+            <li>💰 New Sale Completed</li>
+            <li>👤 Customer Registered</li>
+            <li>🧾 Invoice Generated</li>
+          </ul>
+
+        </div>
+
+        {/* Quick Actions */}
+
+        <div className="recent-card">
+
+          <h2>Quick Actions</h2>
+
+          <Link to="/inventory">
+            <button>Add Product</button>
+          </Link>
+
+          <Link to="/sales">
+            <button>Create Sale</button>
+          </Link>
+
+          <Link to="/reports">
+            <button>View Reports</button>
+          </Link>
+
+        </div>
+
+        {/* Logged In User */}
+
+        <div className="user-card">
+
+          <h2>Logged In User</h2>
+
+          <p>
+            <strong>Name:</strong> {user?.name || "Admin"}
+          </p>
+
+          <p>
+            <strong>Email:</strong> {user?.email || "admin@gmail.com"}
+          </p>
+
+          <button
+            className="logout-btn"
+            onClick={logout}
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </div>
 
     </div>
   );

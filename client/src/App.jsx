@@ -1,8 +1,9 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
-// Components
+// Website Components
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Features from "./components/Features";
@@ -23,91 +24,125 @@ import Register from "./components/Register";
 function Home() {
   return (
     <>
+      <Navbar />
       <Hero />
       <Features />
       <WhyChoose />
+      <Footer />
     </>
   );
 }
 
 function App() {
   return (
-    <>
-      <Navbar />
+    <Routes>
 
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      {/* Website */}
 
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
+      <Route path="/" element={<Home />} />
+
+      <Route
+        path="/login"
+        element={
+          <>
+            <Navbar />
+            <Login />
+            <Footer />
+          </>
+        }
+      />
+
+      <Route
+        path="/register"
+        element={
+          <>
+            <Navbar />
+            <Register />
+            <Footer />
+          </>
+        }
+      />
+
+      {/* ERP */}
+
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Layout>
               <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/inventory"
-          element={
-            <ProtectedRoute>
+      <Route
+        path="/inventory"
+        element={
+          <ProtectedRoute>
+            <Layout>
               <Inventory />
-            </ProtectedRoute>
-          }
-        />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/sales"
-          element={
-            <ProtectedRoute>
+      <Route
+        path="/sales"
+        element={
+          <ProtectedRoute>
+            <Layout>
               <Sales />
-            </ProtectedRoute>
-          }
-        />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/customers"
-          element={
-            <ProtectedRoute>
+      <Route
+        path="/customers"
+        element={
+          <ProtectedRoute>
+            <Layout>
               <Customers />
-            </ProtectedRoute>
-          }
-        />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/invoices"
-          element={
-            <ProtectedRoute>
+      <Route
+        path="/invoices"
+        element={
+          <ProtectedRoute>
+            <Layout>
               <Invoices />
-            </ProtectedRoute>
-          }
-        />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute>
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute>
+            <Layout>
               <Reports />
-            </ProtectedRoute>
-          }
-        />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Layout>
               <Settings />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-      <Footer />
-    </>
+    </Routes>
   );
 }
 

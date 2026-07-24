@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./Invoices.css";
+import { generateInvoice } from "../utils/generateInvoice";
 
 function Invoices() {
   const [invoices, setInvoices] = useState([]);
@@ -27,9 +28,7 @@ function Invoices() {
 
     try {
       await axios.delete(`http://localhost:5000/api/invoices/${id}`);
-
       alert("Invoice Deleted Successfully");
-
       fetchInvoices();
     } catch (err) {
       console.log(err);
@@ -117,12 +116,32 @@ function Invoices() {
                 </td>
 
                 <td>
+
+                  <button
+                    className="pdf-btn"
+                    onClick={() =>
+                      generateInvoice({
+                        invoiceNumber: invoice.invoiceNo,
+                        customerName: invoice.customerName,
+                        productName: invoice.product,
+                        quantity: invoice.quantity,
+                        price: Number(invoice.price),
+                        total: Number(invoice.totalAmount),
+                        status: invoice.status,
+                        createdAt: invoice.createdAt,
+                      })
+                    }
+                  >
+                    PDF
+                  </button>
+
                   <button
                     className="delete-btn"
                     onClick={() => deleteInvoice(invoice._id)}
                   >
                     Delete
                   </button>
+
                 </td>
 
               </tr>
