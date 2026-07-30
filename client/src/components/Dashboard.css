@@ -1,233 +1,465 @@
-/* ===========================
+/* ==========================================
    DASHBOARD PAGE
-=========================== */
+========================================== */
 
-.dashboard-page {
-  width: 100%;
-  min-height: 100vh;
-  background: #f5f7fb;
-  padding: 30px;
+.dashboard-page{
+    padding:0;
+    background:#f5f7fb;
+    min-height:100vh;
 }
 
-/* ===========================
-   TITLE
-=========================== */
+/* ==========================================
+   HERO SECTION
+========================================== */
 
-.dashboard-title {
-  text-align: center;
-  font-size: 48px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 40px;
+.dashboard-hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:40px;
+
+    background:linear-gradient(135deg,#ffffff,#f8fbff);
+
+    border:1px solid #e5e7eb;
+
+    border-radius:24px;
+
+    padding:36px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 10px 30px rgba(15,23,42,.05);
 }
 
-/* ===========================
-   TOP STATISTICS
-=========================== */
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-  margin-bottom: 40px;
+.hero-left{
+    flex:1;
 }
 
-.card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 30px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transition: 0.3s;
+.hero-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:8px 18px;
+
+    border-radius:999px;
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    margin-bottom:18px;
 }
 
-.card:hover {
-  transform: translateY(-6px);
+.hero-left h1{
+
+    margin:0;
+
+    font-size:42px;
+
+    font-weight:800;
+
+    color:#0f172a;
+
+    line-height:1.2;
 }
 
-.card h3 {
-  font-size: 22px;
-  color: #555;
-  margin-bottom: 15px;
+.hero-left p{
+
+    margin-top:18px;
+
+    color:#64748b;
+
+    font-size:17px;
+
+    line-height:1.7;
+
+    max-width:650px;
 }
 
-.card h2 {
-  font-size: 44px;
-  color: #2563eb;
+/* ==========================================
+   HERO BUTTONS
+========================================== */
+
+.hero-right{
+
+    display:flex;
+
+    gap:14px;
+
+    flex-wrap:wrap;
+
+    justify-content:flex-end;
 }
 
-/* ===========================
-   BOTTOM GRID
-=========================== */
+.hero-primary{
 
-.dashboard-bottom {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  margin-top: 20px;
+    height:52px;
+
+    padding:0 28px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    box-shadow:0 10px 25px rgba(37,99,235,.25);
 }
 
-/* ===========================
-   COMMON BOXES
-=========================== */
+.hero-primary:hover{
 
-.recent-card,
-.user-card {
-  background: white;
-  border-radius: 18px;
-  padding: 30px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    background:#1d4ed8;
+
+    transform:translateY(-3px);
 }
 
-/* ===========================
-   HEADINGS
-=========================== */
+.hero-secondary{
 
-.recent-card h2,
-.user-card h2 {
-  text-align: center;
-  font-size: 34px;
-  color: #1e293b;
-  margin-bottom: 25px;
+    height:52px;
+
+    padding:0 22px;
+
+    border:1px solid #dbeafe;
+
+    border-radius:14px;
+
+    background:white;
+
+    color:#2563eb;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
 }
 
-/* ===========================
-   RECENT ACTIVITY
-=========================== */
+.hero-secondary:hover{
 
-.recent-card ul {
-  list-style: none;
-  padding: 0;
+    background:#eff6ff;
+
+    transform:translateY(-3px);
 }
 
-.recent-card li {
-  font-size: 24px;
-  padding: 16px 0;
-  border-bottom: 1px solid #ececec;
-  text-align: center;
+/* ==========================================
+   KPI SECTION
+========================================== */
+
+.dashboard-cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+
+    gap:22px;
+
+    margin-bottom:32px;
 }
 
-.recent-card li:last-child {
-  border-bottom: none;
+.dashboard-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    border:1px solid #e5e7eb;
+
+    padding:22px;
+
+    transition:.3s;
+
+    box-shadow:0 10px 25px rgba(15,23,42,.05);
 }
 
-/* ===========================
-   QUICK ACTION BUTTONS
-=========================== */
+.dashboard-card:hover{
 
-.recent-card a {
-  text-decoration: none;
+    transform:translateY(-5px);
+
+    box-shadow:0 18px 35px rgba(37,99,235,.08);
 }
 
-.recent-card button {
-  width: 100%;
-  padding: 16px;
-  margin-bottom: 18px;
-  border: none;
-  border-radius: 10px;
-  background: #2563eb;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  transition: 0.3s;
+/* ==========================================
+   CHARTS
+========================================== */
+
+.dashboard-charts{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:24px;
+
+    margin-bottom:30px;
 }
 
-.recent-card button:hover {
-  background: #1d4ed8;
+.chart-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    border:1px solid #e5e7eb;
+
+    padding:24px;
+
+    box-shadow:0 10px 25px rgba(15,23,42,.05);
+
+    transition:.3s;
 }
 
-/* ===========================
-   USER CARD
-=========================== */
+.chart-card:hover{
 
-.user-card {
-  grid-column: 1 / -1;
-  max-width: 500px;
-  width: 100%;
-  justify-self: center;
-  text-align: center;
+    transform:translateY(-4px);
 }
 
-.user-card p {
-  font-size: 24px;
-  margin: 18px 0;
+.chart-header{
+
+    margin-bottom:20px;
 }
 
-.user-card strong {
-  color: #111827;
+.chart-header h2{
+
+    margin:0;
+
+    font-size:22px;
+
+    color:#0f172a;
 }
 
-/* ===========================
-   LOGOUT BUTTON
-=========================== */
+.chart-header p{
 
-.logout-btn {
-  margin-top: 25px;
-  padding: 14px 45px;
-  border: none;
-  border-radius: 10px;
-  background: #dc2626;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  transition: 0.3s;
+    margin-top:8px;
+
+    color:#64748b;
+
+    font-size:14px;
 }
 
-.logout-btn:hover {
-  background: #b91c1c;
+/* ==========================================
+   WIDGETS
+========================================== */
+
+.dashboard-widgets{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:24px;
 }
 
-/* ===========================
+.widget-card{
+
+    background:white;
+
+    border-radius:20px;
+
+    border:1px solid #e5e7eb;
+
+    padding:24px;
+
+    box-shadow:0 10px 25px rgba(15,23,42,.05);
+
+    transition:.3s;
+}
+
+.widget-card:hover{
+
+    transform:translateY(-4px);
+}
+
+.widget-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:18px;
+}
+
+.widget-header h2{
+
+    margin:0;
+
+    font-size:20px;
+
+    color:#111827;
+}
+
+.widget-header span{
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+    padding:6px 14px;
+
+    border-radius:999px;
+
+    font-size:13px;
+
+    font-weight:600;
+}
+
+/* ==========================================
+   LISTS
+========================================== */
+
+.widget-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+}
+
+.widget-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:#f8fafc;
+
+    border-radius:14px;
+
+    padding:16px;
+
+    transition:.3s;
+}
+
+.widget-item:hover{
+
+    background:#eff6ff;
+}
+
+/* ==========================================
+   EMPTY STATE
+========================================== */
+
+.empty-widget{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    height:250px;
+
+    text-align:center;
+}
+
+.empty-icon{
+
+    font-size:70px;
+
+    margin-bottom:16px;
+}
+
+.empty-widget p{
+
+    color:#64748b;
+
+    font-size:16px;
+}
+
+/* ==========================================
    RESPONSIVE
-=========================== */
+========================================== */
 
-@media (max-width: 1000px) {
+@media(max-width:1200px){
 
-  .dashboard-bottom {
-    grid-template-columns: 1fr;
-  }
+.dashboard-charts{
 
-  .user-card {
-    grid-column: auto;
-    max-width: 100%;
-  }
+    grid-template-columns:1fr;
 
 }
 
-@media (max-width: 768px) {
+.dashboard-widgets{
 
-  .dashboard-page {
-    padding: 20px;
-  }
+    grid-template-columns:1fr;
 
-  .dashboard-title {
-    font-size: 36px;
-  }
+}
 
-  .card h2 {
-    font-size: 34px;
-  }
+}
 
-  .card h3 {
-    font-size: 18px;
-  }
+@media(max-width:992px){
 
-  .recent-card h2,
-  .user-card h2 {
-    font-size: 28px;
-  }
+.dashboard-hero{
 
-  .recent-card li {
-    font-size: 18px;
-  }
+    flex-direction:column;
 
-  .user-card p {
-    font-size: 18px;
-  }
+    align-items:flex-start;
+}
 
-  .recent-card button,
-  .logout-btn {
-    font-size: 18px;
-  }
+.hero-right{
+
+    width:100%;
+
+    justify-content:flex-start;
+}
+
+}
+
+@media(max-width:768px){
+
+.dashboard-page{
+
+    padding:20px;
+}
+
+.dashboard-hero{
+
+    padding:24px;
+}
+
+.hero-left h1{
+
+    font-size:30px;
+}
+
+.hero-left p{
+
+    font-size:15px;
+}
+
+.hero-primary,
+.hero-secondary{
+
+    width:100%;
+}
+
+.chart-card,
+.widget-card{
+
+    padding:18px;
+}
 
 }

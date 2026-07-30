@@ -119,10 +119,24 @@ function Inventory() {
     );
   });
 
+  const inventoryValue = products.reduce(
+    (total, product) =>
+      total + Number(product.price) * Number(product.stock),
+    0
+  );
+
+  const lowStock = products.filter(
+    (product) => product.stock <= 20
+  ).length;
+
+  const availableStock = products.filter(
+    (product) => product.stock > 20
+  ).length;
+
   if (loading) {
     return (
       <div className="inventory-container">
-        <h2 style={{ textAlign: "center" }}>
+        <h2 className="loading-text">
           Loading Products...
         </h2>
       </div>
@@ -131,8 +145,20 @@ function Inventory() {
 
   return (
     <div className="inventory-container">
-      <div className="inventory-header">
-        <h1>Inventory Management</h1>
+
+      {/* Page Header */}
+
+      <div className="page-header">
+
+        <div className="page-title">
+
+          <h1>Inventory</h1>
+
+          <p>
+            Manage your products, stock levels and pricing.
+          </p>
+
+        </div>
 
         <button
           className="add-btn"
@@ -152,22 +178,64 @@ function Inventory() {
         >
           {showForm ? "Close Form" : "+ Add Product"}
         </button>
+
       </div>
 
-      <input
-        className="search-box"
-        type="text"
-        placeholder="Search by Name, Price or Stock..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      {/* Statistics */}
 
-      <h3 className="product-count">
-        Total Products : {filteredProducts.length}
-      </h3>
+      <div className="stats-grid">
+
+        <div className="stat-card">
+          <span className="stat-icon">📦</span>
+          <h2>{products.length}</h2>
+          <p>Total Products</p>
+        </div>
+
+        <div className="stat-card">
+          <span className="stat-icon">💰</span>
+          <h2>
+            ₹{inventoryValue.toLocaleString("en-IN")}
+          </h2>
+          <p>Inventory Value</p>
+        </div>
+
+        <div className="stat-card">
+          <span className="stat-icon">⚠️</span>
+          <h2>{lowStock}</h2>
+          <p>Low Stock</p>
+        </div>
+
+        <div className="stat-card">
+          <span className="stat-icon">✅</span>
+          <h2>{availableStock}</h2>
+          <p>Available</p>
+        </div>
+
+      </div>
+
+      {/* Search */}
+
+      <div className="toolbar">
+
+        <input
+          className="search-box"
+          type="text"
+          placeholder="🔍 Search products..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+      </div>
+
+      <p className="results-text">
+        Showing {filteredProducts.length} Products
+      </p>
+
+      {/* Form */}
 
       {showForm && (
         <div className="form-container">
+
           <input
             type="text"
             name="name"
@@ -195,25 +263,42 @@ function Inventory() {
           <button onClick={saveProduct}>
             {editingId ? "Update Product" : "Save Product"}
           </button>
+
         </div>
       )}
 
+      {/* Table */}
+
       <table className="inventory-table">
+
         <thead>
+
           <tr>
+
             <th>#</th>
+
             <th>Name</th>
+
             <th>Price</th>
+
             <th>Stock</th>
+
             <th>Created</th>
+
             <th>Actions</th>
+
           </tr>
+
         </thead>
 
         <tbody>
+
           {filteredProducts.length > 0 ? (
+
             filteredProducts.map((product, index) => (
+
               <tr key={product._id}>
+
                 <td>{index + 1}</td>
 
                 <td>{product.name}</td>
@@ -226,11 +311,16 @@ function Inventory() {
 
                 <td>
                   {product.createdAt
-                    ? new Date(product.createdAt).toLocaleDateString()
+                    ? new Date(product.createdAt).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
                     : "-"}
                 </td>
 
                 <td>
+
                   <button
                     className="edit-btn"
                     onClick={() => editProduct(product)}
@@ -244,25 +334,36 @@ function Inventory() {
                   >
                     Delete
                   </button>
+
                 </td>
+
               </tr>
+
             ))
+
           ) : (
+
             <tr>
+
               <td
                 colSpan="6"
                 style={{
                   textAlign: "center",
-                  padding: "20px",
-                  fontWeight: "bold",
+                  padding: "30px",
+                  fontWeight: "600",
                 }}
               >
-                No Products Found
+                📦 No Products Found
               </td>
+
             </tr>
+
           )}
+
         </tbody>
+
       </table>
+
     </div>
   );
 }

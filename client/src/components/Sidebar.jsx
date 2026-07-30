@@ -1,8 +1,25 @@
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+
+import {
+  FaHome,
+  FaBoxes,
+  FaShoppingCart,
+  FaUsers,
+  FaFileInvoice,
+  FaChartBar,
+  FaCog,
+  FaSignOutAlt,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
+
 import "./Sidebar.css";
 
 function Sidebar() {
   const navigate = useNavigate();
+
+  const [collapsed, setCollapsed] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -15,77 +32,126 @@ function Sidebar() {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
 
-      {/* Logo */}
+      <div className="sidebar-inner">
 
-      <div className="logo">
-        <h2>SmartBiz ERP</h2>
-      </div>
+        {/* Collapse Button */}
 
-      {/* User */}
+        <button
+          className="collapse-btn"
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
+        </button>
 
-      <div className="user-info">
+        {/* Logo */}
 
-        <div className="avatar">
-          {user?.name?.charAt(0).toUpperCase() || "A"}
+        <div className="sidebar-logo">
+
+          <div className="logo-circle">
+            SB
+          </div>
+
+          {!collapsed && (
+            <div>
+              <h2>SmartBiz ERP</h2>
+              <p>Business Management</p>
+            </div>
+          )}
+
         </div>
 
-        <h4>{user?.name || "Admin"}</h4>
+        {/* User */}
 
-        <p>{user?.email || "admin@gmail.com"}</p>
+        {!collapsed && (
+          <div className="sidebar-user">
+
+            <div className="user-avatar">
+              {user?.name?.charAt(0).toUpperCase() || "A"}
+            </div>
+
+            <h3>{user?.name || "Administrator"}</h3>
+
+            <span>System Administrator</span>
+
+            <small>
+              {user?.email || "admin@example.com"}
+            </small>
+
+          </div>
+        )}
+
+        {/* Scrollable Menu */}
+
+        <div className="sidebar-menu-wrapper">
+
+          <nav className="sidebar-menu">
+
+            <NavLink to="/dashboard" className="menu-item">
+              <div className="menu-icon">
+                <FaHome />
+              </div>
+              <span>Dashboard</span>
+            </NavLink>
+
+            <NavLink to="/inventory" className="menu-item">
+              <div className="menu-icon">
+                <FaBoxes />
+              </div>
+              <span>Inventory</span>
+            </NavLink>
+
+            <NavLink to="/sales" className="menu-item">
+              <div className="menu-icon">
+                <FaShoppingCart />
+              </div>
+              <span>Sales</span>
+            </NavLink>
+
+            <NavLink to="/customers" className="menu-item">
+              <div className="menu-icon">
+                <FaUsers />
+              </div>
+              <span>Customers</span>
+            </NavLink>
+
+            <NavLink to="/invoices" className="menu-item">
+              <div className="menu-icon">
+                <FaFileInvoice />
+              </div>
+              <span>Invoices</span>
+            </NavLink>
+
+            <NavLink to="/reports" className="menu-item">
+              <div className="menu-icon">
+                <FaChartBar />
+              </div>
+              <span>Reports</span>
+            </NavLink>
+
+            <NavLink to="/settings" className="menu-item">
+              <div className="menu-icon">
+                <FaCog />
+              </div>
+              <span>Settings</span>
+            </NavLink>
+
+          </nav>
+
+        </div>
+
+        {/* Logout */}
+
+        <button
+          className="logout-btn"
+          onClick={handleLogout}
+        >
+          <FaSignOutAlt />
+          {!collapsed && <span>Logout</span>}
+        </button>
 
       </div>
-
-      {/* Menu */}
-
-      <nav className="sidebar-nav">
-
-        <NavLink to="/dashboard" className="nav-link">
-          <span>🏠</span>
-          <span>Dashboard</span>
-        </NavLink>
-
-        <NavLink to="/inventory" className="nav-link">
-          <span>📦</span>
-          <span>Inventory</span>
-        </NavLink>
-
-        <NavLink to="/sales" className="nav-link">
-          <span>💰</span>
-          <span>Sales</span>
-        </NavLink>
-
-        <NavLink to="/customers" className="nav-link">
-          <span>👥</span>
-          <span>Customers</span>
-        </NavLink>
-
-        <NavLink to="/invoices" className="nav-link">
-          <span>🧾</span>
-          <span>Invoices</span>
-        </NavLink>
-
-        <NavLink to="/reports" className="nav-link">
-          <span>📊</span>
-          <span>Reports</span>
-        </NavLink>
-
-        <NavLink to="/settings" className="nav-link">
-          <span>⚙️</span>
-          <span>Settings</span>
-        </NavLink>
-
-      </nav>
-
-      {/* Logout */}
-
-      <button
-        className="logout-btn"
-        onClick={handleLogout}
-      >
-        🚪 Logout
-      </button>
 
     </aside>
   );

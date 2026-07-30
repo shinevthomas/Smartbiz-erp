@@ -4,14 +4,49 @@
     background:#f5f7fb;
 }
 
+/* ==========================
+   MAIN CONTENT
+========================== */
+
 .main-section{
     flex:1;
+    margin-left:290px;      /* SAME AS SIDEBAR WIDTH */
     display:flex;
     flex-direction:column;
+    min-width:0;
+    transition:.3s;
 }
+
+/* ==========================
+   PAGE
+========================== */
 
 .page-content{
     flex:1;
-    padding:25px;
-    overflow:auto;
+    overflow-y:auto;
+    padding:24px;
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media(max-width:992px){
+
+.main-section{
+    margin-left:92px;
+}
+
+}
+
+@media(max-width:768px){
+
+.main-section{
+    margin-left:0;
+}
+
+.page-content{
+    padding:18px;
+}
+
 }

@@ -2,43 +2,45 @@ import Product from "../models/Product.js";
 import Sale from "../models/Sale.js";
 import Invoice from "../models/Invoice.js";
 
-// Create Sale
+// ==========================================
+// CREATE SALE
+// ==========================================
 export const createSale = async (req, res) => {
   try {
     const { customerName, product, quantity } = req.body;
 
-    // Check if all fields are provided
     if (!customerName || !product || !quantity) {
       return res.status(400).json({
+        success: false,
         message: "Please provide all required fields.",
       });
     }
 
-    // Find product
     const selectedProduct = await Product.findById(product);
 
     if (!selectedProduct) {
       return res.status(404).json({
+        success: false,
         message: "Product not found.",
       });
     }
 
-    // Check stock availability
     if (selectedProduct.stock < quantity) {
       return res.status(400).json({
+        success: false,
         message: "Insufficient stock available.",
       });
     }
 
-    // Calculate total amount
-    const totalAmount = selectedProduct.price * quantity;
+    const totalAmount =
+      Number(selectedProduct.price) * Number(quantity);
 
-    // Reduce stock
-    selectedProduct.stock -= quantity;
+    // Update Stock
+    selectedProduct.stock -= Number(quantity);
     await selectedProduct.save();
 
-    // Save Sale
-    const sale = new Sale({
+    // Create Sale
+    const sale = await Sale.create({
       customerName,
       product,
       quantity,
@@ -46,15 +48,10 @@ export const createSale = async (req, res) => {
       totalAmount,
     });
 
-    await sale.save();
-
-    // ===========================
     // Create Invoice Automatically
-    // ===========================
-
     const invoiceCount = await Invoice.countDocuments();
 
-    const invoice = new Invoice({
+    const invoice = await Invoice.create({
       invoiceNo: `INV${String(invoiceCount + 1).padStart(3, "0")}`,
       customerName,
       product: selectedProduct.name,
@@ -64,10 +61,9 @@ export const createSale = async (req, res) => {
       status: "Paid",
     });
 
-    await invoice.save();
-
     res.status(201).json({
-      message: "Sale and Invoice created successfully.",
+      success: true,
+      message: "Sale created successfully.",
       sale,
       invoice,
     });
@@ -76,33 +72,43 @@ export const createSale = async (req, res) => {
     console.error(error);
 
     res.status(500).json({
-      message: "Internal Server Error",
-      error: error.message,
-    });
-  }
-};
-
-// Get All Sales
-export const getSales = async (req, res) => {
-  try {
-    const sales = await Sale.find().populate("product");
-
-    res.status(200).json(sales);
-
-  } catch (error) {
-    res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
-// Get Single Sale
+// ==========================================
+// GET ALL SALES
+// ==========================================
+export const getSales = async (req, res) => {
+  try {
+    const sales = await Sale.find()
+      .populate("product")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(sales);
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ==========================================
+// GET SINGLE SALE
+// ==========================================
 export const getSaleById = async (req, res) => {
   try {
     const sale = await Sale.findById(req.params.id).populate("product");
 
     if (!sale) {
       return res.status(404).json({
+        success: false,
         message: "Sale not found.",
       });
     }
@@ -110,24 +116,30 @@ export const getSaleById = async (req, res) => {
     res.status(200).json(sale);
 
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }
 };
 
-// Delete Sale
+// ==========================================
+// DELETE SALE
+// ==========================================
 export const deleteSale = async (req, res) => {
   try {
     const sale = await Sale.findById(req.params.id);
 
     if (!sale) {
       return res.status(404).json({
+        success: false,
         message: "Sale not found.",
       });
     }
 
-    // Restore stock
+    // Restore Product Stock
     const product = await Product.findById(sale.product);
 
     if (product) {
@@ -135,21 +147,25 @@ export const deleteSale = async (req, res) => {
       await product.save();
     }
 
-    // Delete sale
+    // Delete Sale
     await Sale.findByIdAndDelete(req.params.id);
 
-    // Delete invoice with same customer and amount
+    // Delete Matching Invoice
     await Invoice.findOneAndDelete({
       customerName: sale.customerName,
       totalAmount: sale.totalAmount,
     });
 
     res.status(200).json({
-      message: "Sale and Invoice deleted successfully.",
+      success: true,
+      message: "Sale deleted successfully.",
     });
 
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
+      success: false,
       message: error.message,
     });
   }

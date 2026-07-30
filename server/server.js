@@ -12,6 +12,9 @@ import settingsRoutes from "./routes/settingsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+
+console.log("🚀 Server.js is running");
 dotenv.config();
 
 const app = express();
@@ -30,7 +33,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/users", userRoutes);
-
+app.use("/api/notifications", notificationRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
@@ -38,17 +41,20 @@ app.get("/", (req, res) => {
 });
 
 // MongoDB Connection
+console.log("Connecting to MongoDB...");
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("✅ MongoDB Connected");
+    console.log("✅ MongoDB Connected Successfully");
 
     const PORT = process.env.PORT || 5000;
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🚀 Server is running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.error("❌ MongoDB Connection Error:", err);
+    console.error("❌ MongoDB Connection Failed");
+    console.error(err);
   });

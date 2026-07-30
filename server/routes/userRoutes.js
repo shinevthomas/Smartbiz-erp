@@ -1,4 +1,5 @@
 import express from "express";
+
 import {
   getProfile,
   updateProfile,
@@ -7,19 +8,13 @@ import {
 
 const router = express.Router();
 
-// ==============================
-// GET USER PROFILE
-// ==============================
-router.get("/:id", getProfile);
+// Get Profile
+router.get("/profile/:id", getProfile);
 
-// ==============================
-// UPDATE USER PROFILE
-// ==============================
-router.put("/:id", updateProfile);
+// Update Profile
+router.put("/profile/:id", updateProfile);
 
-// ==============================
-// CHANGE PASSWORD
-// ==============================
+// Change Password
 router.put("/change-password/:id", changePassword);
 
 export default router;

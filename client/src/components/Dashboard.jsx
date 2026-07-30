@@ -1,150 +1,246 @@
 import "./Dashboard.css";
-import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
+import DashboardCards from "./DashboardCards";
+import DashboardCharts from "./DashboardCharts";
+import DashboardWidgets from "./DashboardWidgets";
+import NotificationBell from "./NotificationBell";
+import DashboardOverview from "./DashboardOverview";
 function Dashboard() {
   const navigate = useNavigate();
 
-  const [stats, setStats] = useState({
-    totalProducts: 0,
+  const [dashboardData, setDashboardData] = useState({
+    revenueData: [],
+    salesData: [],
+    recentSales: [],
+    lowStockProducts: [],
     totalRevenue: 0,
-    totalCustomers: 0,
     totalSales: 0,
+    totalCustomers: 0,
+    totalProducts: 0,
+    totalInvoices: 0,
+    lowStock: 0,
   });
 
-  const user = JSON.parse(localStorage.getItem("user"));
-
   useEffect(() => {
-    fetchDashboard();
+    loadDashboard();
   }, []);
 
-  const fetchDashboard = async () => {
+  const loadDashboard = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/dashboard"
+      const [
+        salesRes,
+        productsRes,
+        customersRes,
+        invoicesRes,
+      ] = await Promise.all([
+        axios.get("http://localhost:5000/api/sales"),
+        axios.get("http://localhost:5000/api/products"),
+        axios.get("http://localhost:5000/api/customers"),
+        axios.get("http://localhost:5000/api/invoices"),
+      ]);
+
+      const sales = salesRes.data;
+      const products = productsRes.data;
+      const customers = customersRes.data;
+      const invoices = invoicesRes.data;
+
+      const totalRevenue = sales.reduce(
+        (sum, sale) => sum + Number(sale.totalAmount || 0),
+        0
       );
 
-      setStats(res.data);
-    } catch (error) {
-      console.log(error);
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      const currentMonth = new Date().getMonth();
+
+      const lastSixMonths = [];
+
+      for (let i = 5; i >= 0; i--) {
+        const index = (currentMonth - i + 12) % 12;
+
+        lastSixMonths.push({
+          month: months[index],
+          revenue: 0,
+          sales: 0,
+        });
+      }
+
+      sales.forEach((sale) => {
+        const month = new Date(
+          sale.createdAt
+        ).toLocaleString("default", {
+          month: "short",
+        });
+
+        const item = lastSixMonths.find(
+          (m) => m.month === month
+        );
+
+        if (item) {
+          item.revenue += Number(
+            sale.totalAmount || 0
+          );
+          item.sales += 1;
+        }
+      });
+
+      const revenueData = lastSixMonths.map(
+        (item) => ({
+          month: item.month,
+          revenue: item.revenue,
+        })
+      );
+
+      const salesData = lastSixMonths.map(
+        (item) => ({
+          month: item.month,
+          sales: item.sales,
+        })
+      );
+
+      const recentSales = [...sales]
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt) -
+            new Date(a.createdAt)
+        )
+        .slice(0, 5);
+
+      const lowStockProducts = products.filter(
+        (product) => product.stock < 10
+      );
+
+      setDashboardData({
+        revenueData,
+        salesData,
+        recentSales,
+        lowStockProducts,
+        totalRevenue,
+        totalSales: sales.length,
+        totalCustomers: customers.length,
+        totalProducts: products.length,
+        totalInvoices: invoices.length,
+        lowStock: lowStockProducts.length,
+      });
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
-  const logout = () => {
+  const hour = new Date().getHours();
 
-  toast.success("Logout Successful!");
+  let greeting = "Good Evening";
 
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  if (hour < 12) greeting = "Good Morning";
+  else if (hour < 18) greeting = "Good Afternoon";
+return (
+  <div className="dashboard-page">
 
-  setTimeout(() => {
-    navigate("/login");
-  }, 1000);
+    {/* =========================
+        HERO SECTION
+    ========================== */}
 
-}
-  
+    <section className="dashboard-hero">
 
-  return (
-    <div className="dashboard-page">
+      <div className="hero-left">
 
-      <h1 className="dashboard-title">
-        Dashboard
-      </h1>
+        <span className="hero-badge">
+          SmartBiz ERP
+        </span>
 
-      {/* Statistics */}
+        <h1>
+          {greeting}, {JSON.parse(localStorage.getItem("user"))?.name || "Administrator"} 👋
+        </h1>
 
-      <div className="stats-grid">
-
-        <div className="card">
-          <h3>Total Products</h3>
-          <h2>{stats.totalProducts}</h2>
-        </div>
-
-        <div className="card">
-          <h3>Total Revenue</h3>
-          <h2>₹{stats.totalRevenue.toLocaleString()}</h2>
-        </div>
-
-        <div className="card">
-          <h3>Total Customers</h3>
-          <h2>{stats.totalCustomers}</h2>
-        </div>
-
-        <div className="card">
-          <h3>Total Sales</h3>
-          <h2>{stats.totalSales}</h2>
-        </div>
+        <p>
+          Monitor your company's performance, track revenue,
+          manage inventory, and stay updated with real-time
+          business insights.
+        </p>
 
       </div>
 
-      {/* Bottom Section */}
+      <div className="hero-right">
 
-      <div className="dashboard-bottom">
+        <button className="hero-primary">
+          + New Sale
+        </button>
 
-        {/* Recent Activity */}
+        <button className="hero-secondary">
+          + Product
+        </button>
 
-        <div className="recent-card">
+        <button className="hero-secondary">
+          + Customer
+        </button>
 
-          <h2>Recent Activity</h2>
-
-          <ul>
-            <li>📦 Product Added</li>
-            <li>💰 New Sale Completed</li>
-            <li>👤 Customer Registered</li>
-            <li>🧾 Invoice Generated</li>
-          </ul>
-
-        </div>
-
-        {/* Quick Actions */}
-
-        <div className="recent-card">
-
-          <h2>Quick Actions</h2>
-
-          <Link to="/inventory">
-            <button>Add Product</button>
-          </Link>
-
-          <Link to="/sales">
-            <button>Create Sale</button>
-          </Link>
-
-          <Link to="/reports">
-            <button>View Reports</button>
-          </Link>
-
-        </div>
-
-        {/* Logged In User */}
-
-        <div className="user-card">
-
-          <h2>Logged In User</h2>
-
-          <p>
-            <strong>Name:</strong> {user?.name || "Admin"}
-          </p>
-
-          <p>
-            <strong>Email:</strong> {user?.email || "admin@gmail.com"}
-          </p>
-
-          <button
-            className="logout-btn"
-            onClick={logout}
-          >
-            Logout
-          </button>
-
-        </div>
+        <button className="hero-secondary">
+          + Invoice
+        </button>
 
       </div>
 
-    </div>
-  );
+    </section>
+
+    {/* =========================
+        KPI CARDS
+    ========================== */}
+
+    <DashboardCards
+      totalRevenue={dashboardData.totalRevenue}
+      totalSales={dashboardData.totalSales}
+      totalCustomers={dashboardData.totalCustomers}
+      totalProducts={dashboardData.totalProducts}
+      totalInvoices={dashboardData.totalInvoices}
+      lowStock={dashboardData.lowStock}
+    />
+
+    {/* =========================
+        CHARTS
+    ========================== */}
+
+    <DashboardCharts
+      revenueData={dashboardData.revenueData}
+      salesData={dashboardData.salesData}
+    />
+
+    {/* =========================
+        WIDGETS
+    ========================== */}
+
+    <DashboardWidgets
+      recentSales={dashboardData.recentSales}
+      lowStockProducts={dashboardData.lowStockProducts}
+    />
+{/* =========================
+    BUSINESS OVERVIEW
+========================= */}
+
+<DashboardOverview
+  totalRevenue={dashboardData.totalRevenue}
+  totalSales={dashboardData.totalSales}
+  totalCustomers={dashboardData.totalCustomers}
+  totalProducts={dashboardData.totalProducts}
+  totalInvoices={dashboardData.totalInvoices}
+/>
+  </div>
+);
 }
 
 export default Dashboard;

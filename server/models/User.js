@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    // Login Details
     name: {
       type: String,
       required: true,
@@ -19,31 +18,19 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Company Details
-    companyName: {
+    role: {
       type: String,
-      default: "",
+      enum: ["admin", "staff"],
+      default: "staff",
     },
 
-    phone: {
-      type: String,
-      default: "",
-    },
-
-    address: {
-      type: String,
-      default: "",
-    },
-
-    currency: {
-      type: String,
-      default: "INR",
-    },
-
-    logo: {
-      type: String,
-      default: "",
-    },
+    companyName: String,
+    phone: String,
+    address: String,
+    currency: String,
+    logo: String,
+    gst: String,
+    theme: String,
   },
   {
     timestamps: true,

@@ -1,0 +1,156 @@
+/* ==========================================
+   DASHBOARD CARDS
+========================================== */
+
+.dashboard-cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:24px;
+    margin:32px 0;
+}
+
+/* ==========================================
+   CARD
+========================================== */
+
+.dashboard-card{
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:22px;
+    padding:24px;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:all .35s ease;
+    box-shadow:0 10px 25px rgba(15,23,42,.06);
+}
+
+.dashboard-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:4px;
+    background:linear-gradient(90deg,#2563eb,#60a5fa);
+}
+
+.dashboard-card:hover{
+    box-shadow:0 22px 45px rgba(37,99,235,.12);
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:24px;
+}
+
+.card-icon{
+    width:64px;
+    height:64px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+}
+
+.trend-badge{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#ecfdf5;
+    color:#10b981;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+}
+
+/* ==========================================
+   BODY
+========================================== */
+
+.card-body h5{
+    margin:0;
+    font-size:15px;
+    font-weight:600;
+    color:#64748b;
+}
+
+.card-body h2{
+    margin:12px 0 8px;
+    font-size:34px;
+    font-weight:800;
+    color:#0f172a;
+    line-height:1.1;
+}
+
+.card-body p{
+    margin:0;
+    color:#94a3b8;
+    font-size:14px;
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.card-footer{
+    margin-top:24px;
+    padding-top:18px;
+    border-top:1px solid #f1f5f9;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.footer-text{
+    font-size:13px;
+    color:#64748b;
+}
+
+.footer-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:992px){
+
+.dashboard-cards{
+    grid-template-columns:repeat(2,1fr);
+}
+
+}
+
+@media(max-width:768px){
+
+.dashboard-cards{
+    grid-template-columns:1fr;
+}
+
+.dashboard-card{
+    padding:20px;
+}
+
+.card-body h2{
+    font-size:28px;
+}
+
+.card-icon{
+    width:58px;
+    height:58px;
+    font-size:22px;
+}
+
+}

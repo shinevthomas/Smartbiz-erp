@@ -132,15 +132,15 @@ function App() {
       />
 
       <Route
-        path="/settings"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Settings />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+  path="/settings"
+  element={
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <Layout>
+        <Settings />
+      </Layout>
+    </ProtectedRoute>
+  }
+/>
 
     </Routes>
   );

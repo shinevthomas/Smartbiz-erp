@@ -1,0 +1,258 @@
+/* ==========================================
+   DASHBOARD CHARTS
+========================================== */
+
+.dashboard-charts{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:28px;
+    margin-top:30px;
+}
+
+/* ==========================================
+   CARD
+========================================== */
+
+.chart-card{
+
+    background:#ffffff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:22px;
+
+    padding:26px;
+
+    box-shadow:
+        0 12px 30px rgba(15,23,42,.05);
+
+    transition:.35s ease;
+
+    overflow:hidden;
+
+    position:relative;
+
+}
+
+.chart-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:
+        0 20px 45px rgba(37,99,235,.12);
+
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.chart-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+.chart-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+/* ==========================================
+   ICON
+========================================== */
+
+.chart-icon{
+
+    width:58px;
+
+    height:58px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:24px;
+
+    color:#ffffff;
+
+    flex-shrink:0;
+
+}
+
+.chart-icon.revenue{
+
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+}
+
+.chart-icon.sales{
+
+    background:linear-gradient(135deg,#10b981,#34d399);
+
+}
+
+/* ==========================================
+   TITLE
+========================================== */
+
+.chart-title h2{
+
+    margin:0;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.chart-title p{
+
+    margin-top:6px;
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+/* ==========================================
+   SUMMARY
+========================================== */
+
+.chart-summary{
+
+    text-align:right;
+
+}
+
+.chart-summary h3{
+
+    margin:0;
+
+    font-size:24px;
+
+    color:#111827;
+
+    font-weight:800;
+
+}
+
+.chart-summary span{
+
+    color:#64748b;
+
+    font-size:13px;
+
+}
+
+/* ==========================================
+   RECHARTS
+========================================== */
+
+.recharts-wrapper{
+
+    font-size:13px;
+
+}
+
+.recharts-cartesian-axis-tick-value{
+
+    fill:#64748b;
+
+}
+
+.recharts-default-tooltip{
+
+    border:none!important;
+
+    border-radius:14px!important;
+
+    box-shadow:0 15px 35px rgba(15,23,42,.15)!important;
+
+}
+
+.recharts-legend-wrapper{
+
+    padding-top:10px!important;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:1100px){
+
+.dashboard-charts{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.chart-card{
+
+    padding:20px;
+
+}
+
+.chart-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:18px;
+
+}
+
+.chart-summary{
+
+    text-align:left;
+
+}
+
+.chart-title h2{
+
+    font-size:20px;
+
+}
+
+.chart-summary h3{
+
+    font-size:22px;
+
+}
+
+.chart-icon{
+
+    width:52px;
+
+    height:52px;
+
+    font-size:22px;
+
+}
+
+}
