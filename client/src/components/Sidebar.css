@@ -1,157 +1,173 @@
-/* ==========================================
+/* ===================================================
    GOOGLE FONT
-========================================== */
+=================================================== */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
     font-family:"Inter",sans-serif;
+    box-sizing:border-box;
 }
 
-/* ==========================================
+/* ===================================================
    SIDEBAR
-========================================== */
+=================================================== */
 
 .sidebar{
+
     position:fixed;
     top:0;
     left:0;
 
-    width:290px;
+    width:260px;
     height:100vh;
 
     background:#ffffff;
 
     border-right:1px solid #e5e7eb;
 
-    box-shadow:8px 0 30px rgba(15,23,42,.06);
-
-    z-index:1000;
-
-    transition:.35s;
-}
-
-.sidebar.collapsed{
-    width:90px;
-}
-
-/* ==========================================
-   INNER
-========================================== */
-
-.sidebar-inner{
-    height:100%;
-
     display:flex;
     flex-direction:column;
 
-    padding:20px 16px;
+    transition:.35s ease;
+
+    z-index:999;
+
 }
 
-/* ==========================================
-   COLLAPSE BUTTON
-========================================== */
+.sidebar.collapsed{
 
-.collapse-btn{
+    width:82px;
+
+}
+
+/* ===================================================
+   TOP
+=================================================== */
+
+.sidebar-top{
+
+    height:74px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 18px;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.logo-section{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+}
+
+.logo-circle{
+
     width:42px;
     height:42px;
 
-    margin-left:auto;
-    margin-bottom:18px;
-
-    border:none;
     border-radius:12px;
 
-    background:#eff6ff;
-    color:#2563eb;
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+    color:#ffffff;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:15px;
+    font-weight:800;
+
+    flex-shrink:0;
+
+}
+
+.logo-text h2{
+
+    margin:0;
+
+    font-size:17px;
+
+    color:#0f172a;
+
+    font-weight:700;
+
+}
+
+.logo-text span{
+
+    font-size:12px;
+
+    color:#64748b;
+
+}
+
+/* ===================================================
+   COLLAPSE
+=================================================== */
+
+.collapse-btn{
+
+    width:34px;
+    height:34px;
+
+    border:none;
+
+    background:#f8fafc;
+
+    border-radius:10px;
 
     cursor:pointer;
 
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
 
-    transition:.3s;
+    color:#475569;
+
+    transition:.25s;
+
 }
 
 .collapse-btn:hover{
+
     background:#2563eb;
-    color:#fff;
+
+    color:white;
+
 }
 
-/* ==========================================
-   LOGO
-========================================== */
-
-.sidebar-logo{
-    display:flex;
-    align-items:center;
-    gap:14px;
-
-    margin-bottom:25px;
-}
-
-.logo-circle{
-    width:56px;
-    height:56px;
-
-    border-radius:18px;
-
-    background:linear-gradient(135deg,#2563eb,#3b82f6);
-
-    color:#fff;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    font-size:22px;
-    font-weight:700;
-
-    flex-shrink:0;
-}
-
-.sidebar-logo h2{
-    font-size:22px;
-    color:#0f172a;
-}
-
-.sidebar-logo p{
-    margin-top:4px;
-    color:#64748b;
-    font-size:13px;
-}
-
-/* ==========================================
-   USER CARD
-========================================== */
+/* ===================================================
+   USER
+=================================================== */
 
 .sidebar-user{
-    background:#f8fafc;
 
-    border:1px solid #e2e8f0;
+    padding:22px;
 
-    border-radius:18px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 
-    padding:18px;
+    border-bottom:1px solid #edf2f7;
 
-    text-align:center;
-
-    margin-bottom:22px;
 }
 
 .user-avatar{
-    width:70px;
-    height:70px;
 
-    margin:auto auto 12px;
+    width:62px;
+    height:62px;
 
     border-radius:50%;
 
-    background:linear-gradient(135deg,#2563eb,#3b82f6);
+    background:linear-gradient(135deg,#2563eb,#60a5fa);
 
     color:white;
 
@@ -159,136 +175,224 @@
     justify-content:center;
     align-items:center;
 
-    font-size:28px;
+    font-size:24px;
     font-weight:700;
+
+    margin-bottom:14px;
+
 }
 
 .sidebar-user h3{
-    font-size:18px;
+
+    margin:0;
+
+    font-size:16px;
+
     color:#0f172a;
+
 }
 
-.sidebar-user span{
-    display:block;
+.sidebar-user p{
 
-    margin-top:6px;
+    margin:5px 0;
 
-    color:#2563eb;
+    color:#64748b;
 
-    font-size:14px;
-    font-weight:600;
+    font-size:13px;
+
 }
 
-.sidebar-user small{
-    display:block;
+.status{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
 
     margin-top:8px;
 
-    color:#94a3b8;
+    font-size:12px;
 
-    word-break:break-word;
+    color:#16a34a;
+
+    font-weight:600;
+
 }
 
-/* ==========================================
-   MENU WRAPPER
-========================================== */
+.dot{
 
-.sidebar-menu-wrapper{
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+}
+
+/* ===================================================
+   MENU
+=================================================== */
+
+.sidebar-menu{
+
     flex:1;
+
+    padding:18px 12px;
 
     overflow-y:auto;
 
-    padding-right:6px;
 }
 
-.sidebar-menu-wrapper::-webkit-scrollbar{
-    width:6px;
+.sidebar-menu::-webkit-scrollbar{
+
+    width:5px;
+
 }
 
-.sidebar-menu-wrapper::-webkit-scrollbar-thumb{
+.sidebar-menu::-webkit-scrollbar-thumb{
+
     background:#d1d5db;
+
     border-radius:20px;
-}
 
-/* ==========================================
-   MENU
-========================================== */
-
-.sidebar-menu{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
 }
 
 .menu-item{
-    height:56px;
 
     display:flex;
     align-items:center;
 
-    gap:16px;
+    gap:14px;
 
-    padding:0 14px;
+    height:48px;
 
-    text-decoration:none;
+    padding:0 16px;
 
     border-radius:14px;
 
     color:#475569;
 
-    font-size:15px;
-    font-weight:600;
+    text-decoration:none;
+
+    margin-bottom:8px;
 
     transition:.25s;
+
 }
 
 .menu-item:hover{
+
     background:#eff6ff;
+
     color:#2563eb;
+
 }
 
 .menu-item.active{
-    background:#2563eb;
-    color:white;
 
-    box-shadow:0 12px 24px rgba(37,99,235,.20);
+    background:#2563eb;
+
+    color:#ffffff;
+
+    box-shadow:0 8px 18px rgba(37,99,235,.25);
+
 }
 
 .menu-icon{
-    width:40px;
-    height:40px;
 
-    border-radius:12px;
-
-    background:#f1f5f9;
+    width:22px;
 
     display:flex;
-    align-items:center;
     justify-content:center;
 
-    font-size:17px;
+    font-size:18px;
 
-    transition:.25s;
+    flex-shrink:0;
+
 }
 
-.menu-item:hover .menu-icon{
-    background:#2563eb;
-    color:white;
+.menu-item span{
+
+    font-size:14px;
+
+    font-weight:600;
+
 }
 
-.menu-item.active .menu-icon{
-    background:white;
-    color:#2563eb;
+/* ===================================================
+   STORAGE
+=================================================== */
+
+.sidebar-storage{
+
+    margin:0 16px 18px;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:16px;
+
+    padding:16px;
+
 }
 
-/* ==========================================
+.storage-top{
+
+    display:flex;
+    justify-content:space-between;
+
+    font-size:13px;
+
+    color:#334155;
+
+    margin-bottom:12px;
+
+}
+
+.storage-bar{
+
+    height:8px;
+
+    background:#e2e8f0;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+}
+
+.storage-fill{
+
+    height:100%;
+
+    background:linear-gradient(90deg,#2563eb,#60a5fa);
+
+    border-radius:999px;
+
+}
+
+.sidebar-storage small{
+
+    display:block;
+
+    margin-top:10px;
+
+    color:#64748b;
+
+    font-size:12px;
+
+}
+
+/* ===================================================
    LOGOUT
-========================================== */
+=================================================== */
 
 .logout-btn{
-    margin-top:18px;
 
-    height:54px;
+    margin:16px;
+
+    height:48px;
 
     border:none;
 
@@ -296,7 +400,9 @@
 
     background:#ef4444;
 
-    color:white;
+    color:#ffffff;
+
+    cursor:pointer;
 
     display:flex;
     justify-content:center;
@@ -304,63 +410,93 @@
 
     gap:10px;
 
-    font-size:15px;
+    font-size:14px;
+
     font-weight:600;
 
-    cursor:pointer;
-
     transition:.25s;
+
 }
 
 .logout-btn:hover{
+
     background:#dc2626;
-    transform:translateY(-2px);
+
 }
 
-/* ==========================================
-   COLLAPSED
-========================================== */
-
-.sidebar.collapsed .sidebar-logo div:last-child,
+.sidebar.collapsed .logout-btn span,
+.sidebar.collapsed .logo-text,
 .sidebar.collapsed .sidebar-user,
-.sidebar.collapsed .menu-item span,
-.sidebar.collapsed .logout-btn span{
+.sidebar.collapsed .sidebar-storage,
+.sidebar.collapsed .menu-item span{
+
     display:none;
+
 }
 
 .sidebar.collapsed .menu-item{
+
     justify-content:center;
+
     padding:0;
+
 }
 
-.sidebar.collapsed .logout-btn{
+.sidebar.collapsed .sidebar-top{
+
     justify-content:center;
+
 }
 
-/* ==========================================
-   RESPONSIVE
-========================================== */
+.sidebar.collapsed .collapse-btn{
 
-@media(max-width:1100px){
+    position:absolute;
+
+    top:20px;
+
+    right:-16px;
+
+    width:32px;
+
+    height:32px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:white;
+
+    box-shadow:0 8px 18px rgba(37,99,235,.25);
+
+}
+
+/* ===================================================
+   RESPONSIVE
+=================================================== */
+
+@media(max-width:992px){
 
 .sidebar{
-    width:90px;
+
+    width:82px;
+
 }
 
-.sidebar-logo div:last-child,
+.logo-text,
 .sidebar-user,
-.menu-item span,
-.logout-btn span{
+.sidebar-storage,
+.menu-item span{
+
     display:none;
+
 }
 
 .menu-item{
-    justify-content:center;
-    padding:0;
-}
 
-.logout-btn{
     justify-content:center;
+
+    padding:0;
+
 }
 
 }
@@ -368,11 +504,9 @@
 @media(max-width:768px){
 
 .sidebar{
-    transform:translateX(-100%);
-}
 
-.sidebar.mobile-open{
-    transform:translateX(0);
+    transform:translateX(-100%);
+
 }
 
 }

@@ -1,69 +1,105 @@
 import "./Topbar.css";
+
 import { useState, useEffect } from "react";
 
 import {
   FiSearch,
+  FiBell,
   FiSettings,
   FiChevronDown,
+  FiMoon,
+  FiSun,
   FiUser,
   FiLogOut,
+  FiMenu,
 } from "react-icons/fi";
 
-import { useNavigate } from "react-router-dom";
-import NotificationBell from "./NotificationBell";
+function Topbar({ collapsed, setCollapsed }) {
+  const user =
+    JSON.parse(localStorage.getItem("user")) || {};
 
-function Topbar() {
-  const navigate = useNavigate();
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [showProfile, setShowProfile] = useState(false);
 
-  const [currentTime, setCurrentTime] = useState("");
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [showNotifications, setShowNotifications] =
+    useState(false);
+
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    const updateTime = () => {
-      setCurrentTime(
-        new Date().toLocaleString("en-GB", {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      );
-    };
-
-    updateTime();
-
-    const timer = setInterval(updateTime, 1000);
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
 
     return () => clearInterval(timer);
   }, []);
 
+  const notifications = [
+    {
+      id: 1,
+      title: "Low Stock Alert",
+      message: "Printer Paper is running low.",
+      time: "2 min ago",
+    },
+    {
+      id: 2,
+      title: "New Order",
+      message: "A new customer order has been placed.",
+      time: "15 min ago",
+    },
+    {
+      id: 3,
+      title: "Invoice Paid",
+      message: "Invoice INV-1008 has been paid.",
+      time: "1 hour ago",
+    },
+  ];
+
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-theme");
+  };
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/login");
+    window.location.href = "/login";
   };
 
   return (
     <header className="topbar">
 
-      {/* LEFT */}
+      {/* Left Section */}
 
       <div className="topbar-left">
 
-        <h1>Dashboard</h1>
+        <button
+          className="menu-toggle"
+          onClick={() =>
+            setCollapsed(!collapsed)
+          }
+        >
+          <FiMenu />
+        </button>
 
-        <p>
-          Welcome back,
-          <strong> {user?.name || "Administrator"}</strong>
-        </p>
+        <div>
+
+          <h1>Dashboard</h1>
+
+          <p>
+            Welcome back,
+            <strong>
+              {" "}
+              {user?.name || "Administrator"}
+            </strong>
+          </p>
+
+        </div>
 
       </div>
 
-      {/* SEARCH */}
+      {/* Search */}
 
       <div className="topbar-search">
 
@@ -76,25 +112,91 @@ function Topbar() {
 
       </div>
 
-      {/* RIGHT */}
+      {/* Right */}
 
       <div className="topbar-right">
 
         <div className="topbar-time">
-          {currentTime}
+
+          {currentTime.toLocaleDateString(
+            "en-GB",
+            {
+              weekday: "short",
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            }
+          )}
+
+          {" • "}
+
+          {currentTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+
         </div>
 
-        {/* Notification */}
+        {/* Notifications */}
 
-        <NotificationBell />
+        <div className="notification-wrapper">
 
-        {/* Settings */}
+          <button
+            className="top-icon"
+            onClick={() =>
+              setShowNotifications(
+                !showNotifications
+              )
+            }
+          >
+            <FiBell />
+
+            <span className="badge">
+              {notifications.length}
+            </span>
+
+          </button>
+
+          {showNotifications && (
+
+            <div className="notification-dropdown">
+
+              <h3>Notifications</h3>
+
+              {notifications.map((item) => (
+
+                <div
+                  key={item.id}
+                  className="notification-item"
+                >
+                  <h4>{item.title}</h4>
+
+                  <p>{item.message}</p>
+
+                  <small>{item.time}</small>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          )}
+
+        </div>
+
+        {/* Theme */}
 
         <button
           className="top-icon"
-          onClick={() => navigate("/settings")}
-          title="Settings"
+          onClick={toggleTheme}
         >
+          {darkMode ? <FiSun /> : <FiMoon />}
+        </button>
+
+        {/* Settings */}
+
+        <button className="top-icon">
           <FiSettings />
         </button>
 
@@ -104,18 +206,31 @@ function Topbar() {
 
           <div
             className="profile-box"
-            onClick={() => setProfileOpen(!profileOpen)}
+            onClick={() =>
+              setShowProfile(!showProfile)
+            }
           >
 
             <div className="avatar">
-              {user?.name?.charAt(0).toUpperCase() || "A"}
+
+              {user?.name
+                ? user.name
+                    .charAt(0)
+                    .toUpperCase()
+                : "A"}
+
             </div>
 
             <div className="profile-info">
 
-              <h4>{user?.name || "Administrator"}</h4>
+              <h4>
+                {user?.name ||
+                  "Administrator"}
+              </h4>
 
-              <small>System Administrator</small>
+              <small>
+                System Administrator
+              </small>
 
             </div>
 
@@ -123,23 +238,34 @@ function Topbar() {
 
           </div>
 
-          {profileOpen && (
+          {showProfile && (
 
             <div className="profile-dropdown">
 
-              <button onClick={() => navigate("/settings")}>
+              <button>
+
                 <FiUser />
+
                 My Profile
+
               </button>
 
-              <button onClick={() => navigate("/settings")}>
+              <button>
+
                 <FiSettings />
-                Settings
+
+                Account Settings
+
               </button>
 
-              <button onClick={logout}>
+              <button
+                onClick={logout}
+              >
+
                 <FiLogOut />
+
                 Logout
+
               </button>
 
             </div>

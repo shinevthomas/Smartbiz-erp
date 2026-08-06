@@ -1,13 +1,12 @@
 import "./DashboardOverview.css";
 
 import {
-  FiActivity,
-  FiPackage,
+  FiTrendingUp,
+  FiDollarSign,
   FiShoppingCart,
   FiUsers,
-  FiFileText,
-  FiPlus,
-  FiArrowRight,
+  FiPackage,
+  FiCheckCircle,
 } from "react-icons/fi";
 
 function DashboardOverview({
@@ -18,84 +17,99 @@ function DashboardOverview({
   totalInvoices,
 }) {
 
-  const actions = [
-    {
-      title: "New Sale",
-      icon: <FiShoppingCart />,
-      color: "#2563eb",
-    },
-    {
-      title: "Add Product",
-      icon: <FiPackage />,
-      color: "#10b981",
-    },
-    {
-      title: "New Customer",
-      icon: <FiUsers />,
-      color: "#f59e0b",
-    },
-    {
-      title: "Create Invoice",
-      icon: <FiFileText />,
-      color: "#ef4444",
-    },
-  ];
+  const completion = Math.min(
+    Math.round(
+      (totalSales +
+        totalCustomers +
+        totalProducts +
+        totalInvoices) /
+        4
+    ),
+    100
+  );
 
   return (
 
     <section className="dashboard-overview">
 
-      {/* Business Overview */}
-
-      <div className="overview-card">
+      <div className="overview-left">
 
         <div className="overview-header">
 
-          <div>
+          <h2>Business Overview</h2>
 
-            <h2>Business Overview</h2>
+          <span className="overview-badge">
 
-            <p>Today's Business Summary</p>
+            <FiTrendingUp />
 
-          </div>
+            Business Healthy
 
-          <FiActivity className="overview-icon" />
+          </span>
 
         </div>
+
+        <p>
+          A quick summary of your company's current
+          performance and operational statistics.
+        </p>
 
         <div className="overview-grid">
 
-          <div>
+          <div className="overview-item">
 
-            <h3>
-              ₹{Number(totalRevenue).toLocaleString("en-IN")}
-            </h3>
+            <FiDollarSign />
 
-            <span>Total Revenue</span>
+            <div>
 
-          </div>
+              <h3>
+                ₹{Number(totalRevenue).toLocaleString("en-IN")}
+              </h3>
 
-          <div>
+              <span>Total Revenue</span>
 
-            <h3>{totalSales}</h3>
-
-            <span>Sales</span>
+            </div>
 
           </div>
 
-          <div>
+          <div className="overview-item">
 
-            <h3>{totalCustomers}</h3>
+            <FiShoppingCart />
 
-            <span>Customers</span>
+            <div>
+
+              <h3>{totalSales}</h3>
+
+              <span>Sales</span>
+
+            </div>
 
           </div>
 
-          <div>
+          <div className="overview-item">
 
-            <h3>{totalProducts}</h3>
+            <FiUsers />
 
-            <span>Products</span>
+            <div>
+
+              <h3>{totalCustomers}</h3>
+
+              <span>Customers</span>
+
+            </div>
+
+          </div>
+
+          <div className="overview-item">
+
+            <FiPackage />
+
+            <div>
+
+              <h3>{totalProducts}</h3>
+
+              <span>Products</span>
+
+            </div>
 
           </div>
 
@@ -103,93 +117,27 @@ function DashboardOverview({
 
       </div>
 
-      {/* Quick Actions */}
+      <div className="overview-right">
 
-      <div className="overview-card">
+        <div className="health-circle">
 
-        <div className="overview-header">
+          <h1>{completion}%</h1>
+
+          <span>Business Score</span>
+
+        </div>
+
+        <div className="status-box">
+
+          <FiCheckCircle />
 
           <div>
 
-            <h2>Quick Actions</h2>
+            <strong>System Status</strong>
 
-            <p>Frequently used operations</p>
-
-          </div>
-
-          <FiPlus className="overview-icon blue" />
-
-        </div>
-
-        <div className="action-grid">
-
-          {actions.map((item) => (
-
-            <button
-              key={item.title}
-              className="action-btn"
-            >
-
-              <div
-                className="action-icon"
-                style={{
-                  background: `${item.color}15`,
-                  color: item.color,
-                }}
-              >
-                {item.icon}
-              </div>
-
-              <span>{item.title}</span>
-
-            </button>
-
-          ))}
-
-        </div>
-
-      </div>
-
-      {/* Performance */}
-
-      <div className="overview-card">
-
-        <div className="overview-header">
-
-          <div>
-
-            <h2>Performance</h2>
-
-            <p>Monthly Progress</p>
+            <small>Everything is running normally</small>
 
           </div>
-
-          <FiArrowRight className="overview-icon green" />
-
-        </div>
-
-        <div className="progress-row">
-
-          <span>Revenue Target</span>
-
-          <strong>84%</strong>
-
-        </div>
-
-        <div className="progress-bar">
-
-          <div
-            className="progress-fill"
-            style={{ width: "84%" }}
-          />
-
-        </div>
-
-        <div className="progress-row">
-
-          <span>Invoices</span>
-
-          <strong>{totalInvoices}</strong>
 
         </div>
 

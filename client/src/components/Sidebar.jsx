@@ -1,4 +1,5 @@
-import { useState } from "react";
+import "./Sidebar.css";
+
 import { NavLink, useNavigate } from "react-router-dom";
 
 import {
@@ -14,17 +15,52 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 
-import "./Sidebar.css";
-
-function Sidebar() {
+function Sidebar({ collapsed, setCollapsed }) {
   const navigate = useNavigate();
 
-  const [collapsed, setCollapsed] = useState(false);
+  const user =
+    JSON.parse(localStorage.getItem("user")) || {};
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const menuItems = [
+    {
+      name: "Dashboard",
+      path: "/dashboard",
+      icon: <FaHome />,
+    },
+    {
+      name: "Inventory",
+      path: "/inventory",
+      icon: <FaBoxes />,
+    },
+    {
+      name: "Sales",
+      path: "/sales",
+      icon: <FaShoppingCart />,
+    },
+    {
+      name: "Customers",
+      path: "/customers",
+      icon: <FaUsers />,
+    },
+    {
+      name: "Invoices",
+      path: "/invoices",
+      icon: <FaFileInvoice />,
+    },
+    {
+      name: "Reports",
+      path: "/reports",
+      icon: <FaChartBar />,
+    },
+    {
+      name: "Settings",
+      path: "/settings",
+      icon: <FaCog />,
+    },
+  ];
 
-  const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout?")) {
+  const logout = () => {
+    if (window.confirm("Logout from SmartBiz ERP?")) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       navigate("/login");
@@ -32,126 +68,139 @@ function Sidebar() {
   };
 
   return (
-    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+    <aside
+      className={`sidebar ${
+        collapsed ? "collapsed" : ""
+      }`}
+    >
+      {/* Top */}
 
-      <div className="sidebar-inner">
+      <div className="sidebar-top">
 
-        {/* Collapse Button */}
-
-        <button
-          className="collapse-btn"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
-        </button>
-
-        {/* Logo */}
-
-        <div className="sidebar-logo">
+        <div className="logo-section">
 
           <div className="logo-circle">
             SB
           </div>
 
           {!collapsed && (
-            <div>
+            <div className="logo-text">
               <h2>SmartBiz ERP</h2>
-              <p>Business Management</p>
+              <span>Business Suite</span>
             </div>
           )}
 
         </div>
 
-        {/* User */}
-
-        {!collapsed && (
-          <div className="sidebar-user">
-
-            <div className="user-avatar">
-              {user?.name?.charAt(0).toUpperCase() || "A"}
-            </div>
-
-            <h3>{user?.name || "Administrator"}</h3>
-
-            <span>System Administrator</span>
-
-            <small>
-              {user?.email || "admin@example.com"}
-            </small>
-
-          </div>
-        )}
-
-        {/* Scrollable Menu */}
-
-        <div className="sidebar-menu-wrapper">
-
-          <nav className="sidebar-menu">
-
-            <NavLink to="/dashboard" className="menu-item">
-              <div className="menu-icon">
-                <FaHome />
-              </div>
-              <span>Dashboard</span>
-            </NavLink>
-
-            <NavLink to="/inventory" className="menu-item">
-              <div className="menu-icon">
-                <FaBoxes />
-              </div>
-              <span>Inventory</span>
-            </NavLink>
-
-            <NavLink to="/sales" className="menu-item">
-              <div className="menu-icon">
-                <FaShoppingCart />
-              </div>
-              <span>Sales</span>
-            </NavLink>
-
-            <NavLink to="/customers" className="menu-item">
-              <div className="menu-icon">
-                <FaUsers />
-              </div>
-              <span>Customers</span>
-            </NavLink>
-
-            <NavLink to="/invoices" className="menu-item">
-              <div className="menu-icon">
-                <FaFileInvoice />
-              </div>
-              <span>Invoices</span>
-            </NavLink>
-
-            <NavLink to="/reports" className="menu-item">
-              <div className="menu-icon">
-                <FaChartBar />
-              </div>
-              <span>Reports</span>
-            </NavLink>
-
-            <NavLink to="/settings" className="menu-item">
-              <div className="menu-icon">
-                <FaCog />
-              </div>
-              <span>Settings</span>
-            </NavLink>
-
-          </nav>
-
-        </div>
-
-        {/* Logout */}
-
         <button
-          className="logout-btn"
-          onClick={handleLogout}
+          className="collapse-btn"
+          onClick={() =>
+            setCollapsed(!collapsed)
+          }
         >
-          <FaSignOutAlt />
-          {!collapsed && <span>Logout</span>}
+          {collapsed ? (
+            <FaChevronRight />
+          ) : (
+            <FaChevronLeft />
+          )}
         </button>
 
       </div>
+
+      {/* User */}
+
+      {!collapsed && (
+        <div className="sidebar-user">
+
+          <div className="user-avatar">
+            {user?.name
+              ? user.name.charAt(0).toUpperCase()
+              : "A"}
+          </div>
+
+          <h3>
+            {user?.name || "Administrator"}
+          </h3>
+
+          <p>System Administrator</p>
+
+          <div className="status">
+            <span className="dot"></span>
+            Online
+          </div>
+
+        </div>
+      )}
+
+      {/* Menu */}
+
+      <nav className="sidebar-menu">
+
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.path}
+            className={({ isActive }) =>
+              isActive
+                ? "menu-item active"
+                : "menu-item"
+            }
+          >
+            <div className="menu-icon">
+              {item.icon}
+            </div>
+
+            {!collapsed && (
+              <span>{item.name}</span>
+            )}
+
+          </NavLink>
+        ))}
+
+      </nav>
+
+      {/* Storage */}
+
+      {!collapsed && (
+        <div className="sidebar-storage">
+
+          <div className="storage-top">
+
+            <span>Storage</span>
+
+            <strong>72%</strong>
+
+          </div>
+
+          <div className="storage-bar">
+
+            <div
+              className="storage-fill"
+              style={{ width: "72%" }}
+            ></div>
+
+          </div>
+
+          <small>
+            72 GB used of 100 GB
+          </small>
+
+        </div>
+      )}
+
+      {/* Logout */}
+
+      <button
+        className="logout-btn"
+        onClick={logout}
+      >
+        <FaSignOutAlt />
+
+        {!collapsed && (
+          <span>Logout</span>
+        )}
+
+      </button>
 
     </aside>
   );

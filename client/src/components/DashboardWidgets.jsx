@@ -4,13 +4,16 @@ import {
   FiShoppingBag,
   FiAlertTriangle,
   FiArrowRight,
+  FiPackage,
 } from "react-icons/fi";
 
 function DashboardWidgets({
   recentSales,
   lowStockProducts,
 }) {
+
   return (
+
     <section className="dashboard-widgets">
 
       {/* ==========================
@@ -29,7 +32,11 @@ function DashboardWidgets({
 
           </div>
 
-          <FiShoppingBag className="widget-icon" />
+          <div className="widget-icon blue">
+
+            <FiShoppingBag />
+
+          </div>
 
         </div>
 
@@ -37,9 +44,9 @@ function DashboardWidgets({
 
           <div className="empty-widget">
 
-            <h3>No Sales Found</h3>
+            <h3>No Sales Yet</h3>
 
-            <p>Your recent sales will appear here.</p>
+            <p>Your completed sales will appear here.</p>
 
           </div>
 
@@ -79,8 +86,7 @@ function DashboardWidgets({
 
                   <strong>
 
-                    ₹
-                    {Number(
+                    ₹{Number(
                       sale.totalAmount
                     ).toLocaleString("en-IN")}
 
@@ -124,13 +130,17 @@ function DashboardWidgets({
 
           <div>
 
-            <h2>Low Stock</h2>
+            <h2>Inventory Alerts</h2>
 
             <p>Products requiring attention</p>
 
           </div>
 
-          <FiAlertTriangle className="widget-icon warning" />
+          <div className="widget-icon orange">
+
+            <FiAlertTriangle />
+
+          </div>
 
         </div>
 
@@ -138,9 +148,9 @@ function DashboardWidgets({
 
           <div className="empty-widget">
 
-            <h3>Everything Looks Good 🎉</h3>
+            <h3>Inventory Healthy 🎉</h3>
 
-            <p>No low stock products.</p>
+            <p>No products are running low.</p>
 
           </div>
 
@@ -157,7 +167,7 @@ function DashboardWidgets({
 
                 <div className="product-box">
 
-                  📦
+                  <FiPackage />
 
                 </div>
 
@@ -167,9 +177,7 @@ function DashboardWidgets({
 
                   <p>
 
-                    SKU :
-                    {" "}
-                    {product.sku || "N/A"}
+                    SKU : {product.sku || "N/A"}
 
                   </p>
 
@@ -210,7 +218,9 @@ function DashboardWidgets({
       </div>
 
     </section>
+
   );
+
 }
 
 export default DashboardWidgets;

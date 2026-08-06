@@ -1,45 +1,51 @@
 import "./Dashboard.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
+// Dashboard Components
 import DashboardCards from "./DashboardCards";
 import DashboardCharts from "./DashboardCharts";
+import DashboardInsights from "./DashboardInsights";
 import DashboardWidgets from "./DashboardWidgets";
-import NotificationBell from "./NotificationBell";
 import DashboardOverview from "./DashboardOverview";
 function Dashboard() {
-  const navigate = useNavigate();
 
   const [dashboardData, setDashboardData] = useState({
     revenueData: [],
     salesData: [],
     recentSales: [],
     lowStockProducts: [],
+
     totalRevenue: 0,
     totalSales: 0,
     totalCustomers: 0,
     totalProducts: 0,
     totalInvoices: 0,
+
     lowStock: 0,
   });
-
-  useEffect(() => {
+    useEffect(() => {
     loadDashboard();
   }, []);
 
   const loadDashboard = async () => {
+
     try {
+
       const [
+
         salesRes,
         productsRes,
         customersRes,
         invoicesRes,
+
       ] = await Promise.all([
+
         axios.get("http://localhost:5000/api/sales"),
         axios.get("http://localhost:5000/api/products"),
         axios.get("http://localhost:5000/api/customers"),
         axios.get("http://localhost:5000/api/invoices"),
+
       ]);
 
       const sales = salesRes.data;
@@ -47,12 +53,26 @@ function Dashboard() {
       const customers = customersRes.data;
       const invoices = invoicesRes.data;
 
+      /* ==========================
+         TOTAL REVENUE
+      ========================== */
+
       const totalRevenue = sales.reduce(
-        (sum, sale) => sum + Number(sale.totalAmount || 0),
+
+        (sum, sale) =>
+
+          sum + Number(sale.totalAmount || 0),
+
         0
+
       );
 
+      /* ==========================
+         LAST 6 MONTHS
+      ========================== */
+
       const months = [
+
         "Jan",
         "Feb",
         "Mar",
@@ -65,6 +85,7 @@ function Dashboard() {
         "Oct",
         "Nov",
         "Dec",
+
       ];
 
       const currentMonth = new Date().getMonth();
@@ -72,47 +93,74 @@ function Dashboard() {
       const lastSixMonths = [];
 
       for (let i = 5; i >= 0; i--) {
-        const index = (currentMonth - i + 12) % 12;
+
+        const index =
+          (currentMonth - i + 12) % 12;
 
         lastSixMonths.push({
+
           month: months[index],
+
           revenue: 0,
+
           sales: 0,
+
         });
+
       }
 
+      /* ==========================
+         MONTHLY DATA
+      ========================== */
+
       sales.forEach((sale) => {
+
         const month = new Date(
+
           sale.createdAt
+
         ).toLocaleString("default", {
+
           month: "short",
+
         });
 
         const item = lastSixMonths.find(
+
           (m) => m.month === month
+
         );
 
         if (item) {
+
           item.revenue += Number(
+
             sale.totalAmount || 0
+
           );
+
           item.sales += 1;
+
         }
+
       });
+            /* ==========================
+         CHART DATA
+      ========================== */
 
-      const revenueData = lastSixMonths.map(
-        (item) => ({
-          month: item.month,
-          revenue: item.revenue,
-        })
-      );
+      const revenueData = lastSixMonths.map((item) => ({
+        month: item.month,
+        revenue: item.revenue,
+      }));
 
-      const salesData = lastSixMonths.map(
-        (item) => ({
-          month: item.month,
-          sales: item.sales,
-        })
-      );
+      const salesData = lastSixMonths.map((item) => ({
+        month: item.month,
+        sales: item.sales,
+      }));
+
+      /* ==========================
+         RECENT SALES
+      ========================== */
 
       const recentSales = [...sales]
         .sort(
@@ -122,125 +170,256 @@ function Dashboard() {
         )
         .slice(0, 5);
 
+      /* ==========================
+         LOW STOCK PRODUCTS
+      ========================== */
+
       const lowStockProducts = products.filter(
         (product) => product.stock < 10
       );
 
+      /* ==========================
+         UPDATE DASHBOARD STATE
+      ========================== */
+
       setDashboardData({
+
         revenueData,
+
         salesData,
+
         recentSales,
+
         lowStockProducts,
+
         totalRevenue,
+
         totalSales: sales.length,
+
         totalCustomers: customers.length,
+
         totalProducts: products.length,
+
         totalInvoices: invoices.length,
+
         lowStock: lowStockProducts.length,
+
       });
-    } catch (err) {
-      console.log(err);
+
+    } catch (error) {
+
+      console.error(error);
+
     }
+
   };
+    /* ==========================================
+     GREETING
+  ========================================== */
 
   const hour = new Date().getHours();
 
   let greeting = "Good Evening";
 
-  if (hour < 12) greeting = "Good Morning";
-  else if (hour < 18) greeting = "Good Afternoon";
-return (
-  <div className="dashboard-page">
+  if (hour < 12) {
+    greeting = "Good Morning";
+  } else if (hour < 18) {
+    greeting = "Good Afternoon";
+  }
 
-    {/* =========================
-        HERO SECTION
-    ========================== */}
+  const user =
+    JSON.parse(localStorage.getItem("user")) || {};
 
-    <section className="dashboard-hero">
+  const today = new Date().toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
-      <div className="hero-left">
+  return (
 
-        <span className="hero-badge">
-          SmartBiz ERP
-        </span>
+    <div className="dashboard-page">
 
-        <h1>
-          {greeting}, {JSON.parse(localStorage.getItem("user"))?.name || "Administrator"} 👋
-        </h1>
+      {/* ==========================================
+          HERO SECTION
+      ========================================== */}
 
-        <p>
-          Monitor your company's performance, track revenue,
-          manage inventory, and stay updated with real-time
-          business insights.
-        </p>
+      <section className="dashboard-hero">
 
-      </div>
+        <div className="hero-left">
 
-      <div className="hero-right">
+          <span className="hero-badge">
 
-        <button className="hero-primary">
-          + New Sale
-        </button>
+            SmartBiz ERP Dashboard
 
-        <button className="hero-secondary">
-          + Product
-        </button>
+          </span>
 
-        <button className="hero-secondary">
-          + Customer
-        </button>
+          <h1>
 
-        <button className="hero-secondary">
-          + Invoice
-        </button>
+            {greeting},{" "}
+            {user.name || "Administrator"} 👋
 
-      </div>
+          </h1>
 
-    </section>
+          <p>
 
-    {/* =========================
-        KPI CARDS
-    ========================== */}
+            Welcome back! Here's a complete overview of
+            your business performance, sales, customers,
+            inventory and revenue for today.
 
-    <DashboardCards
-      totalRevenue={dashboardData.totalRevenue}
-      totalSales={dashboardData.totalSales}
-      totalCustomers={dashboardData.totalCustomers}
-      totalProducts={dashboardData.totalProducts}
-      totalInvoices={dashboardData.totalInvoices}
-      lowStock={dashboardData.lowStock}
-    />
+          </p>
 
-    {/* =========================
-        CHARTS
-    ========================== */}
+          <div className="hero-stats">
 
-    <DashboardCharts
-      revenueData={dashboardData.revenueData}
-      salesData={dashboardData.salesData}
-    />
+            <div className="hero-stat">
 
-    {/* =========================
-        WIDGETS
-    ========================== */}
+              <h3>
 
-    <DashboardWidgets
-      recentSales={dashboardData.recentSales}
-      lowStockProducts={dashboardData.lowStockProducts}
-    />
-{/* =========================
-    BUSINESS OVERVIEW
-========================= */}
+                ₹{dashboardData.totalRevenue.toLocaleString("en-IN")}
 
-<DashboardOverview
-  totalRevenue={dashboardData.totalRevenue}
-  totalSales={dashboardData.totalSales}
-  totalCustomers={dashboardData.totalCustomers}
-  totalProducts={dashboardData.totalProducts}
-  totalInvoices={dashboardData.totalInvoices}
-/>
-  </div>
-);
+              </h3>
+
+              <span>Total Revenue</span>
+
+            </div>
+
+            <div className="hero-stat">
+
+              <h3>
+
+                {dashboardData.totalSales}
+
+              </h3>
+
+              <span>Total Orders</span>
+
+            </div>
+
+            <div className="hero-stat">
+
+              <h3>
+
+                {dashboardData.totalCustomers}
+
+              </h3>
+
+              <span>Customers</span>
+
+            </div>
+
+            <div className="hero-stat">
+
+              <h3>
+
+                {dashboardData.totalProducts}
+
+              </h3>
+
+              <span>Products</span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="hero-right">
+
+          <div className="hero-date">
+
+            {today}
+
+          </div>
+
+          <div className="hero-actions">
+
+            <button className="hero-primary">
+
+              + New Sale
+
+            </button>
+
+            <button className="hero-secondary">
+
+              + Product
+
+            </button>
+
+            <button className="hero-secondary">
+
+              + Customer
+
+            </button>
+
+            <button className="hero-secondary">
+
+              + Invoice
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+            {/* ==========================================
+          KPI CARDS
+      ========================================== */}
+
+      <DashboardCards
+        totalRevenue={dashboardData.totalRevenue}
+        totalSales={dashboardData.totalSales}
+        totalCustomers={dashboardData.totalCustomers}
+        totalProducts={dashboardData.totalProducts}
+        totalInvoices={dashboardData.totalInvoices}
+        lowStock={dashboardData.lowStock}
+      />
+
+      {/* ==========================================
+          REVENUE & SALES CHARTS
+      ========================================== */}
+
+      <DashboardCharts
+        revenueData={dashboardData.revenueData}
+        salesData={dashboardData.salesData}
+      />
+
+      {/* ==========================================
+          BUSINESS INSIGHTS
+      ========================================== */}
+
+      <DashboardInsights
+        totalRevenue={dashboardData.totalRevenue}
+        totalSales={dashboardData.totalSales}
+        totalCustomers={dashboardData.totalCustomers}
+        totalProducts={dashboardData.totalProducts}
+      />
+
+      {/* ==========================================
+          RECENT SALES & LOW STOCK
+      ========================================== */}
+
+      <DashboardWidgets
+        recentSales={dashboardData.recentSales}
+        lowStockProducts={dashboardData.lowStockProducts}
+      />
+
+      {/* ==========================================
+          BUSINESS OVERVIEW
+      ========================================== */}
+
+      <DashboardOverview
+        totalRevenue={dashboardData.totalRevenue}
+        totalSales={dashboardData.totalSales}
+        totalCustomers={dashboardData.totalCustomers}
+        totalProducts={dashboardData.totalProducts}
+        totalInvoices={dashboardData.totalInvoices}
+      />
+          </div>
+
+  );
+
 }
 
 export default Dashboard;

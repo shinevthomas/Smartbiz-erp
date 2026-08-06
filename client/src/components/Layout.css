@@ -1,52 +1,81 @@
+/* ==========================================================
+   SMARTBIZ ERP LAYOUT
+========================================================== */
+
 .layout{
     display:flex;
     min-height:100vh;
-    background:#f5f7fb;
+    background:#f4f7fc;
 }
 
-/* ==========================
-   MAIN CONTENT
-========================== */
+/* ==========================================================
+   MAIN SECTION
+========================================================== */
 
 .main-section{
     flex:1;
-    margin-left:290px;      /* SAME AS SIDEBAR WIDTH */
+    margin-left:260px;
+    min-height:100vh;
     display:flex;
     flex-direction:column;
-    min-width:0;
-    transition:.3s;
+    transition:
+        margin-left .35s ease,
+        width .35s ease;
+    width:calc(100% - 260px);
 }
 
-/* ==========================
-   PAGE
-========================== */
+/* ==========================================================
+   COLLAPSED
+========================================================== */
+
+.main-section.collapsed{
+    margin-left:82px;
+    width:calc(100% - 82px);
+}
+
+/* ==========================================================
+   PAGE CONTENT
+========================================================== */
 
 .page-content{
     flex:1;
-    overflow-y:auto;
     padding:24px;
+    background:#f4f7fc;
+    overflow-x:hidden;
 }
 
-/* ==========================
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width:992px){
+
+    .main-section{
+        margin-left:82px;
+        width:calc(100% - 82px);
+    }
+
+    .main-section.collapsed{
+        margin-left:82px;
+        width:calc(100% - 82px);
+    }
+
+}
+
+/* ==========================================================
    MOBILE
-========================== */
+========================================================== */
 
-@media(max-width:992px){
+@media (max-width:768px){
 
-.main-section{
-    margin-left:92px;
-}
+    .main-section,
+    .main-section.collapsed{
+        margin-left:0;
+        width:100%;
+    }
 
-}
-
-@media(max-width:768px){
-
-.main-section{
-    margin-left:0;
-}
-
-.page-content{
-    padding:18px;
-}
+    .page-content{
+        padding:18px;
+    }
 
 }
