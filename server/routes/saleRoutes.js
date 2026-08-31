@@ -1,23 +1,24 @@
 import express from "express";
+
 import {
-  createSale,
   getSales,
+  createSale,
   getSaleById,
   deleteSale,
 } from "../controllers/saleController.js";
 
 const router = express.Router();
 
-// Create Sale
-router.post("/", createSale);
-
-// Get All Sales
+// GET all sales
 router.get("/", getSales);
 
-// Get Single Sale
+// CREATE sale
+router.post("/", createSale);
+
+// GET single sale
 router.get("/:id", getSaleById);
 
-// Delete Sale
+// DELETE sale
 router.delete("/:id", deleteSale);
 
 export default router;

@@ -197,7 +197,7 @@
 
 /* ==========================================================
    CHANGE BADGE
-========================================================== */
+========================================================= */
 
 .stat-change{
 
@@ -207,23 +207,69 @@
 
     justify-content:center;
 
-    min-width:60px;
+    min-width:38px;
 
     height:30px;
 
-    padding:0 12px;
+    padding:0 10px;
 
     border-radius:999px;
 
-    background:#ecfdf5;
+    background:#eff6ff;
 
-    color:#10b981;
+    color:#2563eb;
 
-    font-size:13px;
+    font-size:14px;
 
     font-weight:700;
 
-    border:1px solid #bbf7d0;
+    border:1px solid #dbeafe;
+
+}
+
+.stat-change.warn{
+
+    background:#fef3c7;
+
+    color:#b45309;
+
+    border-color:#fde68a;
+
+}
+
+/* ==========================================================
+   STAT HINT
+========================================================= */
+
+.stat-hint{
+
+    display:block;
+
+    margin-top:12px;
+
+    font-size:13px;
+
+    font-weight:500;
+
+    color:#94a3b8;
+
+}
+
+.stat-hint .low-dot{
+
+    display:inline-block;
+
+    width:8px;
+
+    height:8px;
+
+    margin-right:5px;
+
+    border-radius:50%;
+
+    background:#f59e0b;
+
+    vertical-align:middle;
 
 }
 /* ==========================================================

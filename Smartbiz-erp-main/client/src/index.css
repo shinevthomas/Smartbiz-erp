@@ -1,0 +1,71 @@
+/* =========================
+   GLOBAL DARK THEME
+========================= */
+
+body.dark-theme {
+  background: #121212;
+  color: #ffffff;
+}
+
+/* Cards & Containers */
+body.dark-theme .dashboard,
+body.dark-theme .content,
+body.dark-theme .card,
+body.dark-theme .settings-card,
+body.dark-theme .inventory-container,
+body.dark-theme .customers-container,
+body.dark-theme .sales-container,
+body.dark-theme .invoice-container,
+body.dark-theme .reports-container {
+  background: #1e1e1e;
+  color: white;
+}
+
+/* Sidebar */
+body.dark-theme .sidebar {
+  background: #181818;
+}
+
+body.dark-theme .sidebar a {
+  color: white;
+}
+
+/* Navbar */
+body.dark-theme nav,
+body.dark-theme .navbar {
+  background: #181818;
+  color: white;
+}
+
+/* Tables */
+body.dark-theme table {
+  background: #1e1e1e;
+  color: white;
+}
+
+body.dark-theme th {
+  background: #333;
+}
+
+body.dark-theme td {
+  border-color: #444;
+}
+
+/* Forms */
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select {
+  background: #2c2c2c;
+  color: white;
+  border: 1px solid #555;
+}
+
+/* Buttons */
+body.dark-theme button {
+  background: #2563eb;
+  color: white;
+}
+
+body.dark-theme button:hover {
+  background: #1d4ed8;
+}

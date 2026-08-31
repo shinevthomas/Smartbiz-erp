@@ -1,31 +1,51 @@
 function WhyChoose() {
   return (
-    <section className="why">
-      <h2>Why Choose SmartBiz?</h2>
+    <section className="why" id="about">
+
+      <h2>
+        Everything Your Business Needs
+      </h2>
 
       <div className="why-container">
 
         <div className="why-card">
-          <h3>⚡ Fast</h3>
-          <p>Optimized for speed and performance.</p>
+          <h3>⚡ Fast & Efficient</h3>
+
+          <p>
+            Designed to make everyday business
+            operations faster and easier.
+          </p>
         </div>
 
         <div className="why-card">
           <h3>🔒 Secure</h3>
-          <p>Your business data is protected.</p>
+
+          <p>
+            Your business information is protected
+            with secure authentication and access control.
+          </p>
         </div>
 
         <div className="why-card">
           <h3>☁ Cloud Ready</h3>
-          <p>Access your ERP from anywhere.</p>
+
+          <p>
+            Access your business management system
+            whenever and wherever you need it.
+          </p>
         </div>
 
         <div className="why-card">
           <h3>😊 Easy to Use</h3>
-          <p>Simple interface for everyone.</p>
+
+          <p>
+            A clean and intuitive interface designed
+            for everyday business users.
+          </p>
         </div>
 
       </div>
+
     </section>
   );
 }

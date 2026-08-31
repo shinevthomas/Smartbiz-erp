@@ -1,217 +1,209 @@
-.top-navbar{
+/* =========================================
+   SMARTBIZ ERP NAVBAR
+========================================= */
 
-position:sticky;
+.navbar {
+  width: 100%;
+  height: 78px;
 
-top:0;
+  background: rgba(255, 255, 255, 0.95);
 
-z-index:999;
+  border-bottom: 1px solid #e8edf3;
 
-height:80px;
+  position: relative;
+  z-index: 100;
 
-background:#ffffff;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:0 35px;
-
-border-bottom:1px solid #e5e7eb;
-
-box-shadow:0 6px 20px rgba(0,0,0,.05);
-
+  backdrop-filter: blur(12px);
 }
 
-.navbar-left{
+.navbar-container {
+  width: 100%;
+  max-width: 1400px;
+  height: 100%;
 
-display:flex;
+  margin: auto;
+  padding: 0 6%;
 
-align-items:center;
-
-gap:35px;
-
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.navbar-left h2{
 
-font-size:30px;
+/* =========================================
+   LOGO
+========================================= */
 
-font-weight:700;
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
 
-color:#111827;
+  text-decoration: none;
 
+  color: #14213d;
 }
 
-.search-box{
+.logo-icon {
+  width: 40px;
+  height: 40px;
 
-width:420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-height:48px;
+  border-radius: 10px;
 
-background:#f3f6fb;
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #3b82f6
+  );
 
-border-radius:14px;
+  color: white;
 
-display:flex;
+  font-size: 16px;
+  font-weight: 800;
 
-align-items:center;
-
-padding:0 18px;
-
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.25);
 }
 
-.search-icon{
+.logo-text h2 {
+  margin: 0;
 
-font-size:18px;
+  font-size: 17px;
+  font-weight: 800;
 
-color:#94a3b8;
-
+  color: #14213d;
 }
 
-.search-box input{
+.logo-text span {
+  display: block;
 
-border:none;
+  margin-top: 2px;
 
-outline:none;
+  font-size: 10px;
 
-background:none;
-
-width:100%;
-
-margin-left:12px;
-
-font-size:16px;
-
+  color: #8793a3;
 }
 
-.navbar-right{
 
-display:flex;
+/* =========================================
+   NAVIGATION
+========================================= */
 
-align-items:center;
+.nav-links {
+  display: flex;
+  align-items: center;
 
-gap:20px;
-
+  gap: 30px;
 }
 
-.today-date{
+.nav-links a {
+  text-decoration: none;
 
-font-size:15px;
+  color: #526176;
 
-font-weight:600;
+  font-size: 13px;
+  font-weight: 600;
 
-color:#64748b;
-
+  transition: 0.2s ease;
 }
 
-.icon-btn{
-
-width:48px;
-
-height:48px;
-
-border:none;
-
-background:#f3f6fb;
-
-border-radius:14px;
-
-cursor:pointer;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-size:20px;
-
-position:relative;
-
-transition:.3s;
-
+.nav-links a:hover {
+  color: #2563eb;
 }
 
-.icon-btn:hover{
 
-background:#2563eb;
+/* =========================================
+   ACTIONS
+========================================= */
 
-color:white;
+.nav-actions {
+  display: flex;
+  align-items: center;
 
+  gap: 12px;
 }
 
-.notification-dot{
+.login-btn {
+  padding: 10px 17px;
 
-position:absolute;
+  color: #34445b;
 
-top:10px;
+  text-decoration: none;
 
-right:10px;
+  font-size: 13px;
+  font-weight: 700;
 
-width:8px;
+  border-radius: 8px;
 
-height:8px;
-
-background:red;
-
-border-radius:50%;
-
+  transition: 0.2s ease;
 }
 
-.profile{
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-padding-left:15px;
-
-border-left:1px solid #e5e7eb;
-
+.login-btn:hover {
+  background: #f1f5f9;
+  color: #2563eb;
 }
 
-.profile-icon{
+.start-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
 
-font-size:42px;
+  padding: 11px 18px;
 
-color:#2563eb;
+  background: #2563eb;
+  color: white;
 
+  border-radius: 8px;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+
+  transition: 0.2s ease;
 }
 
-.profile h4{
-
-margin:0;
-
-font-size:16px;
-
-font-weight:700;
-
+.start-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
 }
 
-.profile span{
 
-font-size:13px;
+/* =========================================
+   MOBILE
+========================================= */
 
-color:#64748b;
+@media (max-width: 900px) {
 
+  .nav-links {
+    display: none;
+  }
+
+  .navbar-container {
+    padding: 0 25px;
+  }
 }
 
-@media(max-width:900px){
+@media (max-width: 500px) {
 
-.search-box{
+  .logo-text {
+    display: none;
+  }
 
-display:none;
+  .navbar-container {
+    padding: 0 18px;
+  }
 
-}
+  .login-btn {
+    padding: 9px 10px;
+  }
 
-.today-date{
-
-display:none;
-
-}
-
+  .start-btn {
+    padding: 10px 13px;
+  }
 }

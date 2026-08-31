@@ -10,19 +10,19 @@ import {
 
 const router = express.Router();
 
-// Get all notifications
+// GET all notifications
 router.get("/", getNotifications);
 
-// Create notification
+// CREATE notification
 router.post("/", createNotification);
 
-// Mark notification as read
-router.put("/:id/read", markAsRead);
-
-// Mark all notifications as read
+// MARK ALL notifications as read
 router.put("/read-all", markAllAsRead);
 
-// Delete notification
+// MARK ONE notification as read
+router.put("/:id/read", markAsRead);
+
+// DELETE notification
 router.delete("/:id", deleteNotification);
 
 export default router;

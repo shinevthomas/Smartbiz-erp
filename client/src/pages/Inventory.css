@@ -1,0 +1,442 @@
+/* Inventory Component Styles */
+
+/* Custom scrollbar for better UX */
+.inventory-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.inventory-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.inventory-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.inventory-container::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Table row hover effect enhancement */
+.inventory-table-row {
+  transition: all 0.2s ease;
+}
+
+.inventory-table-row:hover {
+  background-color: #f8fafc;
+  transform: scale(1.01);
+}
+
+/* Status badge animations */
+.status-badge {
+  transition: all 0.3s ease;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Card hover effects */
+.stat-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal animations */
+.modal-backdrop {
+  animation: fadeInBackdrop 0.2s ease;
+}
+
+@keyframes fadeInBackdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Button hover effects */
+.btn-primary {
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.btn-primary:hover::after {
+  width: 200px;
+  height: 200px;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Input focus effects */
+.form-input {
+  transition: all 0.2s ease;
+}
+
+.form-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Loading spinner enhancement */
+.loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Empty state animation */
+.empty-state {
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Table header styling */
+.table-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.table-header th {
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Action button styling */
+.action-btn {
+  transition: all 0.2s ease;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.action-btn:hover {
+  background-color: #f3f4f6;
+  transform: scale(1.1);
+}
+
+.action-btn.edit:hover {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.action-btn.delete:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Filter dropdown styling */
+.filter-dropdown {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* Search input styling */
+.search-input {
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-input:focus + .search-icon {
+  color: #3b82f6;
+}
+
+/* Responsive table for mobile */
+@media (max-width: 768px) {
+  .inventory-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Print styles for inventory reports */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .inventory-table {
+    box-shadow: none;
+  }
+  
+  .stat-card {
+    break-inside: avoid;
+  }
+}
+
+/* Low stock alert animation */
+.low-stock-alert {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Export button styling */
+.export-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.export-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.export-btn:hover::before {
+  left: 100%;
+}
+
+/* Toast notification styling enhancement */
+.toast-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.toast-error {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* Category tag styling */
+.category-tag {
+  transition: all 0.2s ease;
+}
+
+.category-tag:hover {
+  transform: scale(1.05);
+}
+
+/* Quantity input styling */
+.quantity-input {
+  text-align: center;
+  font-weight: 600;
+}
+
+.quantity-input:focus {
+  background-color: #eff6ff;
+}
+
+/* Price formatting */
+.price-display {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Progress bar for stock levels */
+.stock-progress {
+  height: 6px;
+  background-color: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.stock-progress-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.stock-progress-bar.high {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.stock-progress-bar.medium {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.stock-progress-bar.low {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+/* Tooltip styling */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1f2937;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 50;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+  bottom: calc(100% + 0.5rem);
+}
+
+/* Skeleton loading animation */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Badge grouping */
+.badge-group {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+/* Icon button styling */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background-color: #f3f4f6;
+}
+
+/* Form grid enhancement */
+.form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Modal overlay blur */
+.modal-overlay {
+  backdrop-filter: blur(4px);
+}
+
+/* Responsive padding */
+.responsive-padding {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .responsive-padding {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-padding {
+    padding: 2rem;
+  }
+}

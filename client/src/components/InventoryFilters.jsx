@@ -1,3 +1,12 @@
+import "./InventoryFilters.css";
+
+import {
+  FiSearch,
+  FiFilter,
+  FiArrowUp,
+  FiArrowDown,
+} from "react-icons/fi";
+
 function InventoryFilters({
   search,
   setSearch,
@@ -13,7 +22,6 @@ function InventoryFilters({
 
   products,
 }) {
-
   const categories = [
     ...new Set(
       products
@@ -23,122 +31,143 @@ function InventoryFilters({
   ];
 
   return (
-
     <div className="inventory-toolbar">
 
-      {/* Search */}
+      {/* ==========================
+          SEARCH
+      ========================== */}
 
       <div className="search-container">
 
-        <input
-          type="text"
-          className="search-box"
-          placeholder="🔍 Search products..."
-          value={search}
-          onChange={(e) =>
-            setSearch(e.target.value)
-          }
-        />
+        <div className="search-wrap">
+
+          <FiSearch className="search-icon" />
+
+          <input
+            type="text"
+            className="search-box"
+            placeholder="Search by name, SKU, supplier or barcode..."
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+          />
+
+          {search && (
+            <button
+              className="search-clear"
+              onClick={() => setSearch("")}
+              title="Clear search"
+            >
+              ×
+            </button>
+          )}
+
+        </div>
 
       </div>
 
-      {/* Filters */}
+      {/* ==========================
+          FILTERS
+      ========================== */}
 
       <div className="filter-container">
 
         {/* Category */}
 
-        <select
-          className="filter-select"
-          value={categoryFilter}
-          onChange={(e) =>
-            setCategoryFilter(e.target.value)
-          }
-        >
+        <div className="filter-item">
 
-          <option value="All">
-            All Categories
-          </option>
+          <span className="filter-label">
+            <FiFilter /> Category
+          </span>
 
-          {categories.map((category) => (
-
-            <option
-              key={category}
-              value={category}
-            >
-              {category}
+          <select
+            className="filter-select"
+            value={categoryFilter}
+            onChange={(e) =>
+              setCategoryFilter(e.target.value)
+            }
+          >
+            <option value="All">
+              All Categories
             </option>
 
-          ))}
+            {categories.map((category) => (
+              <option
+                key={category}
+                value={category}
+              >
+                {category}
+              </option>
+            ))}
+          </select>
 
-        </select>
+        </div>
 
         {/* Stock */}
 
-        <select
-          className="filter-select"
-          value={stockFilter}
-          onChange={(e) =>
-            setStockFilter(e.target.value)
-          }
-        >
+        <div className="filter-item">
 
-          <option value="All">
-            All Stock
-          </option>
+          <span className="filter-label">Stock</span>
 
-          <option value="In Stock">
-            In Stock
-          </option>
+          <select
+            className="filter-select"
+            value={stockFilter}
+            onChange={(e) =>
+              setStockFilter(e.target.value)
+            }
+          >
+            <option value="All">All Stock</option>
+            <option value="In Stock">In Stock</option>
+            <option value="Low Stock">Low Stock</option>
+            <option value="Out of Stock">
+              Out of Stock
+            </option>
+          </select>
 
-          <option value="Low Stock">
-            Low Stock
-          </option>
+        </div>
 
-          <option value="Out of Stock">
-            Out of Stock
-          </option>
+        {/* Sort */}
 
-        </select>
+        <div className="filter-item">
 
-        {/* Sorting */}
+          <span className="filter-label">
+            {sortBy.includes("Low") ? (
+              <FiArrowUp />
+            ) : (
+              <FiArrowDown />
+            )}{" "}
+            Sort
+          </span>
 
-        <select
-          className="filter-select"
-          value={sortBy}
-          onChange={(e) =>
-            setSortBy(e.target.value)
-          }
-        >
+          <select
+            className="filter-select"
+            value={sortBy}
+            onChange={(e) =>
+              setSortBy(e.target.value)
+            }
+          >
+            <option value="Newest">Newest</option>
+            <option value="Price Low">
+              Price: Low → High
+            </option>
+            <option value="Price High">
+              Price: High → Low
+            </option>
+            <option value="Stock High">
+              Stock: High → Low
+            </option>
+            <option value="Stock Low">
+              Stock: Low → High
+            </option>
+          </select>
 
-          <option value="Newest">
-            Newest
-          </option>
-
-          <option value="Price Low">
-            Price Low → High
-          </option>
-
-          <option value="Price High">
-            Price High → Low
-          </option>
-
-          <option value="Stock High">
-            Stock High
-          </option>
-
-          <option value="Stock Low">
-            Stock Low
-          </option>
-
-        </select>
+        </div>
 
       </div>
 
     </div>
-
   );
-
 }
 
 export default InventoryFilters;

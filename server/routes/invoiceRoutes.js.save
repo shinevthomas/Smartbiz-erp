@@ -1,0 +1,45 @@
+import express from "express";
+
+import {
+  getInvoices,
+  createInvoice,
+  deleteInvoice,
+} from "../controllers/invoiceController.js";
+
+const router = express.Router();
+
+// Get all invoices
+router.get("/", getInvoices);
+
+// Create invoice
+router.post("/", createInvoice);
+
+// Delete invoice
+router.delete("/:id", deleteInvoice);
+
+export default router;cat > routes/invoiceRoutes.js <<'EOF'
+import express from "express";
+
+import {
+  getInvoices,
+  createInvoice,
+  deleteInvoice,
+} from "../controllers/invoiceController.js";
+
+const router = express.Router();
+
+// Get all invoices
+router.get("/", getInvoices);
+
+// Create invoice
+router.post("/", createInvoice);
+
+// Delete invoice
+router.delete("/:id", deleteInvoice);
+
+export default router;
+EOF
+
+
+
+

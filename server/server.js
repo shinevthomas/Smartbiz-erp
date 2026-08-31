@@ -1,8 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
 import dotenv from "dotenv";
-
+import cors from "cors";
 
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
@@ -15,48 +14,93 @@ import authRoutes from "./routes/authRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
-console.log("🚀 Server.js is running");
+
 dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// ================= MIDDLEWARE =================
+
 app.use(express.json());
 
-// Routes
-// Routes
-app.use("/api/products", productRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/sales", saleRoutes);
-app.use("/api/customers", customerRoutes);
-app.use("/api/invoices", invoiceRoutes);
-app.use("/api/reports", reportRoutes);
-app.use("/api/settings", settingsRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/notifications", notificationRoutes);
-// Test Route
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
+
+// ================= HEALTH CHECK =================
+
 app.get("/", (req, res) => {
-  res.send("SmartBiz ERP Server Running...");
+  res.status(200).json({
+    success: true,
+    message: "SmartBiz ERP API is running",
+  });
 });
 
-// MongoDB Connection
-console.log("Connecting to MongoDB...");
+// ================= API ROUTES =================
+
+app.use("/api/auth", authRoutes);
+
+app.use("/api/products", productRoutes);
+
+app.use("/api/categories", categoryRoutes);
+
+app.use("/api/sales", saleRoutes);
+
+app.use("/api/customers", customerRoutes);
+
+app.use("/api/invoices", invoiceRoutes);
+
+app.use("/api/reports", reportRoutes);
+
+app.use("/api/settings", settingsRoutes);
+
+app.use("/api/dashboard", dashboardRoutes);
+
+app.use("/api/users", userRoutes);
+
+app.use("/api/notifications", notificationRoutes);
+
+// ================= 404 HANDLER =================
+
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
+// ================= ERROR HANDLER =================
+
+app.use((err, req, res, next) => {
+  console.error("Server Error:", err);
+
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Internal server error",
+  });
+});
+
+// ================= DATABASE =================
+
+const MONGO_URI =
+  process.env.MONGO_URI ||
+  "mongodb://127.0.0.1:27017/smartbiz";
+
+const PORT = process.env.PORT || 5000;
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected Successfully");
 
-    const PORT = process.env.PORT || 5000;
-
     app.listen(PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      console.log(`🚀 SmartBiz ERP Server running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.error("❌ MongoDB Connection Failed");
-    console.error(err);
+    console.error("❌ MongoDB Connection Error:", err.message);
+    process.exit(1);
   });

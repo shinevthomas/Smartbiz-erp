@@ -1,4 +1,5 @@
 import express from "express";
+
 import {
   getSettings,
   saveSettings,
@@ -6,7 +7,10 @@ import {
 
 const router = express.Router();
 
+// GET settings
 router.get("/", getSettings);
-router.post("/", saveSettings);
+
+// SAVE / UPDATE settings
+router.put("/", saveSettings);
 
 export default router;

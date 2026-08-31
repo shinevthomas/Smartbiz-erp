@@ -8,13 +8,13 @@ import {
 
 const router = express.Router();
 
-// Get Profile
-router.get("/profile/:id", getProfile);
+// GET user profile
+router.get("/:id", getProfile);
 
-// Update Profile
-router.put("/profile/:id", updateProfile);
+// UPDATE user profile
+router.put("/:id", updateProfile);
 
-// Change Password
-router.put("/change-password/:id", changePassword);
+// CHANGE password
+router.put("/:id/password", changePassword);
 
 export default router;

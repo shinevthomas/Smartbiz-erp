@@ -1,16 +1,8 @@
-import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import Home from "./components/Home";
 import Layout from "./components/Layout";
 
-// Website Components
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Features from "./components/Features";
-import WhyChoose from "./components/WhyChoose";
-import Footer from "./components/Footer";
-
-// Pages
 import Dashboard from "./components/Dashboard";
 import Inventory from "./components/Inventory";
 import Sales from "./components/Sales";
@@ -18,129 +10,154 @@ import Customers from "./components/Customers";
 import Invoices from "./components/Invoices";
 import Reports from "./components/Reports";
 import Settings from "./components/Settings";
+
 import Login from "./components/Login";
 import Register from "./components/Register";
 
-function Home() {
-  return (
-    <>
-      <Navbar />
-      <Hero />
-      <Features />
-      <WhyChoose />
-      <Footer />
-    </>
-  );
-}
+import "./App.css";
 
 function App() {
   return (
     <Routes>
 
-      {/* Website */}
+      {/* =====================================
+          HOME PAGE
+          First page when ERP opens
+      ===================================== */}
 
-      <Route path="/" element={<Home />} />
+      <Route
+        path="/"
+        element={<Home />}
+      />
+
+
+      {/* =====================================
+          LOGIN
+      ===================================== */}
 
       <Route
         path="/login"
-        element={
-          <>
-            <Navbar />
-            <Login />
-            <Footer />
-          </>
-        }
+        element={<Login />}
       />
+
+
+      {/* =====================================
+          REGISTER
+      ===================================== */}
 
       <Route
         path="/register"
-        element={
-          <>
-            <Navbar />
-            <Register />
-            <Footer />
-          </>
-        }
+        element={<Register />}
       />
 
-      {/* ERP */}
+
+      {/* =====================================
+          DASHBOARD
+      ===================================== */}
 
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
-            <Layout>
-              <Dashboard />
-            </Layout>
-          </ProtectedRoute>
+          <Layout>
+            <Dashboard />
+          </Layout>
         }
       />
+
+
+      {/* =====================================
+          INVENTORY
+      ===================================== */}
 
       <Route
         path="/inventory"
         element={
-          <ProtectedRoute>
-            <Layout>
-              <Inventory />
-            </Layout>
-          </ProtectedRoute>
+          <Layout>
+            <Inventory />
+          </Layout>
         }
       />
+
+
+      {/* =====================================
+          SALES
+      ===================================== */}
 
       <Route
         path="/sales"
         element={
-          <ProtectedRoute>
-            <Layout>
-              <Sales />
-            </Layout>
-          </ProtectedRoute>
+          <Layout>
+            <Sales />
+          </Layout>
         }
       />
+
+
+      {/* =====================================
+          CUSTOMERS
+      ===================================== */}
 
       <Route
         path="/customers"
         element={
-          <ProtectedRoute>
-            <Layout>
-              <Customers />
-            </Layout>
-          </ProtectedRoute>
+          <Layout>
+            <Customers />
+          </Layout>
         }
       />
+
+
+      {/* =====================================
+          INVOICES
+      ===================================== */}
 
       <Route
         path="/invoices"
         element={
-          <ProtectedRoute>
-            <Layout>
-              <Invoices />
-            </Layout>
-          </ProtectedRoute>
+          <Layout>
+            <Invoices />
+          </Layout>
         }
       />
+
+
+      {/* =====================================
+          REPORTS
+      ===================================== */}
 
       <Route
         path="/reports"
         element={
-          <ProtectedRoute>
-            <Layout>
-              <Reports />
-            </Layout>
-          </ProtectedRoute>
+          <Layout>
+            <Reports />
+          </Layout>
         }
       />
 
+
+      {/* =====================================
+          SETTINGS
+      ===================================== */}
+
       <Route
-  path="/settings"
-  element={
-    <ProtectedRoute allowedRoles={["admin"]}>
-      <Layout>
-        <Settings />
-      </Layout>
-    </ProtectedRoute>
-  }
-/>
+        path="/settings"
+        element={
+          <Layout>
+            <Settings />
+          </Layout>
+        }
+      />
+
+
+      {/* =====================================
+          INVALID URL
+          Send back to Home
+      ===================================== */}
+
+      <Route
+        path="*"
+        element={<Navigate to="/" replace />}
+      />
 
     </Routes>
   );

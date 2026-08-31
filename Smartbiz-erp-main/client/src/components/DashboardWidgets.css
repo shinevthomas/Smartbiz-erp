@@ -1,0 +1,479 @@
+/* ==========================================
+   DASHBOARD WIDGETS
+========================================== */
+
+.dashboard-widgets{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:24px;
+    margin:30px 0;
+}
+
+/* ==========================================
+   CARD
+========================================== */
+
+.widget-card{
+
+    background:#ffffff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:24px;
+
+    padding:24px;
+
+    box-shadow:0 12px 30px rgba(15,23,42,.05);
+
+    transition:.35s ease;
+
+}
+
+.widget-card:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 20px 45px rgba(37,99,235,.10);
+
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.widget-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:22px;
+
+}
+
+.widget-header h2{
+
+    margin:0;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.widget-header p{
+
+    margin-top:6px;
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+/* ==========================================
+   ICON
+========================================== */
+
+.widget-icon{
+
+    width:54px;
+
+    height:54px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#ffffff;
+
+    font-size:22px;
+
+}
+
+.widget-icon.blue{
+
+    background:linear-gradient(135deg,#2563eb,#60a5fa);
+
+}
+
+.widget-icon.orange{
+
+    background:linear-gradient(135deg,#f59e0b,#fbbf24);
+
+}
+
+/* ==========================================
+   LIST
+========================================== */
+
+.widget-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+
+    max-height:360px;
+
+    overflow-y:auto;
+
+    padding-right:4px;
+
+}
+
+/* ==========================================
+   ITEM
+========================================== */
+
+.widget-item{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:14px;
+
+    padding:16px;
+
+    border:1px solid #eef2f7;
+
+    border-radius:18px;
+
+    transition:.3s;
+
+    background:#fafcff;
+
+}
+
+.widget-item:hover{
+
+    background:#f0f7ff;
+
+    border-color:#bfdbfe;
+
+}
+
+/* ==========================================
+   AVATAR
+========================================== */
+
+.widget-avatar{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    background:linear-gradient(135deg,#2563eb,#60a5fa);
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    flex-shrink:0;
+
+}
+
+/* ==========================================
+   PRODUCT
+========================================== */
+
+.product-box{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:14px;
+
+    background:#fff7ed;
+
+    color:#f59e0b;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+    flex-shrink:0;
+
+}
+
+/* ==========================================
+   CONTENT
+========================================== */
+
+.widget-content{
+
+    flex:1;
+
+}
+
+.widget-content h4{
+
+    margin:0;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.widget-content p{
+
+    margin-top:5px;
+
+    font-size:13px;
+
+    color:#64748b;
+
+}
+
+/* ==========================================
+   RIGHT
+========================================== */
+
+.widget-right{
+
+    text-align:right;
+
+}
+
+.widget-right strong{
+
+    display:block;
+
+    font-size:17px;
+
+    color:#0f172a;
+
+    font-weight:700;
+
+}
+
+.widget-right small{
+
+    color:#64748b;
+
+    font-size:12px;
+
+}
+
+/* ==========================================
+   BADGES
+========================================== */
+
+.warning-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:7px 14px;
+
+    border-radius:999px;
+
+    background:#fef3c7;
+
+    color:#b45309;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+.danger{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:7px 14px;
+
+    border-radius:999px;
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+/* ==========================================
+   EMPTY
+========================================== */
+
+.empty-widget{
+
+    height:250px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.empty-widget h3{
+
+    margin-bottom:10px;
+
+    color:#0f172a;
+
+}
+
+.empty-widget p{
+
+    color:#64748b;
+
+}
+
+/* ==========================================
+   FOOTER BUTTON
+========================================== */
+
+.widget-footer{
+
+    width:100%;
+
+    margin-top:22px;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.widget-footer:hover{
+
+    background:#1d4ed8;
+
+    transform:translateY(-2px);
+
+}
+
+/* ==========================================
+   SCROLLBAR
+========================================== */
+
+.widget-list::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.widget-list::-webkit-scrollbar-thumb{
+
+    background:#d1d5db;
+
+    border-radius:999px;
+
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media(max-width:1200px){
+
+.dashboard-widgets{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.widget-card{
+
+    padding:18px;
+
+}
+
+.widget-item{
+
+    padding:14px;
+
+}
+
+.widget-avatar,
+.product-box{
+
+    width:42px;
+
+    height:42px;
+
+    font-size:18px;
+
+}
+
+.widget-header{
+
+    margin-bottom:18px;
+
+}
+
+}
