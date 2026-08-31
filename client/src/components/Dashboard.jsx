@@ -1,6 +1,6 @@
 import "./Dashboard.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 // Dashboard Components
 import DashboardCards from "./DashboardCards";
@@ -40,11 +40,10 @@ function Dashboard() {
         invoicesRes,
 
       ] = await Promise.all([
-
-        axios.get("http://localhost:5000/api/sales"),
-        axios.get("http://localhost:5000/api/products"),
-        axios.get("http://localhost:5000/api/customers"),
-        axios.get("http://localhost:5000/api/invoices"),
+api.get("/sales"),
+api.get("/products"),
+api.get("/customers"),
+api.get("/invoices"),
 
       ]);
 

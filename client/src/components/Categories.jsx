@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./CategoryHeader.css";
 import "./Categories.css";
 import "./CategoryStats.css";
@@ -35,9 +35,8 @@ function Categories() {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        "http://localhost:5000/api/categories"
-      );
+      const res = await api.get("/categories")
+      
 
       setCategories(res.data);
     } catch (err) {
@@ -57,10 +56,7 @@ function Categories() {
   const saveCategory = async () => {
     try {
       if (editingId) {
-        await axios.put(
-          `http://localhost:5000/api/categories/${editingId}`,
-          newCategory
-        );
+        await api.put(`/categories/${editingId}`, ...)
       } else {
         await axios.post(
           "http://localhost:5000/api/categories",
