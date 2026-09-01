@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import api from "../api";
+
 import "./CategoryHeader.css";
 import "./Categories.css";
 import "./CategoryStats.css";
+import "./CategoryTable.css";
+import "./CategoryModal.css";
+
 import CategoryHeader from "./CategoryHeader";
 import CategoryStats from "./CategoryStats";
 import CategoryTable from "./CategoryTable";
 import CategoryModal from "./CategoryModal";
-import "./CategoryTable.css";
-import "./CategoryModal.css";
-
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -17,7 +18,6 @@ function Categories() {
   const [loading, setLoading] = useState(true);
 
   const [showModal, setShowModal] = useState(false);
-
   const [editingId, setEditingId] = useState(null);
 
   const [newCategory, setNewCategory] = useState({
@@ -27,6 +27,10 @@ function Categories() {
     status: "Active",
   });
 
+  // ================================
+  // FETCH CATEGORIES
+  // ================================
+
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -35,16 +39,19 @@ function Categories() {
     try {
       setLoading(true);
 
-      const res = await api.get("/categories")
-      
+      const res = await api.get("/categories");
 
       setCategories(res.data);
     } catch (err) {
-      console.log(err);
+      console.log("Error fetching categories:", err);
     } finally {
       setLoading(false);
     }
   };
+
+  // ================================
+  // HANDLE INPUT
+  // ================================
 
   const handleChange = (e) => {
     setNewCategory({
@@ -53,21 +60,27 @@ function Categories() {
     });
   };
 
+  // ================================
+  // SAVE / UPDATE CATEGORY
+  // ================================
+
   const saveCategory = async () => {
     try {
       if (editingId) {
-        await api.put(`/categories/${editingId}`, ...)
+        await api.put(
+          `/categories/${editingId}`,
+          newCategory
+        );
       } else {
-        await axios.post(
-          "http://localhost:5000/api/categories",
+        await api.post(
+          "/categories",
           newCategory
         );
       }
 
-      fetchCategories();
+      await fetchCategories();
 
       setShowModal(false);
-
       setEditingId(null);
 
       setNewCategory({
@@ -77,9 +90,13 @@ function Categories() {
         status: "Active",
       });
     } catch (err) {
-      console.log(err);
+      console.log("Error saving category:", err);
     }
   };
+
+  // ================================
+  // EDIT CATEGORY
+  // ================================
 
   const editCategory = (category) => {
     setEditingId(category._id);
@@ -87,32 +104,52 @@ function Categories() {
     setShowModal(true);
 
     setNewCategory({
-      name: category.name,
-      description: category.description,
-      color: category.color,
-      status: category.status,
+      name: category.name || "",
+      description: category.description || "",
+      color: category.color || "#2563eb",
+      status: category.status || "Active",
     });
   };
 
+  // ================================
+  // DELETE CATEGORY
+  // ================================
+
   const deleteCategory = async (id) => {
-    if (!window.confirm("Delete this category?")) return;
+    if (!window.confirm("Delete this category?")) {
+      return;
+    }
 
-    await axios.delete(
-      `http://localhost:5000/api/categories/${id}`
-    );
+    try {
+      await api.delete(`/categories/${id}`);
 
-    fetchCategories();
+      await fetchCategories();
+    } catch (err) {
+      console.log("Error deleting category:", err);
+    }
   };
+
+  // ================================
+  // FILTER CATEGORIES
+  // ================================
 
   const filteredCategories = categories.filter((category) =>
     category.name
-      .toLowerCase()
+      ?.toLowerCase()
       .includes(search.toLowerCase())
   );
+
+  // ================================
+  // LOADING
+  // ================================
 
   if (loading) {
     return <h2>Loading Categories...</h2>;
   }
+
+  // ================================
+  // UI
+  // ================================
 
   return (
     <div className="categories-page">
@@ -130,44 +167,30 @@ function Categories() {
 
           setShowModal(true);
         }}
+        search={search}
+        setSearch={setSearch}
       />
 
-      <CategoryStats
-        categories={categories}
-      />
-
-      <div className="category-search">
-
-        <input
-          type="text"
-          placeholder="Search Category..."
-          value={search}
-          onChange={(e) =>
-            setSearch(e.target.value)
-          }
-        />
-
-      </div>
+      <CategoryStats categories={categories} />
 
       <CategoryTable
         categories={filteredCategories}
-        editCategory={editCategory}
-        deleteCategory={deleteCategory}
+        onEdit={editCategory}
+        onDelete={deleteCategory}
       />
 
-      <CategoryModal
-        showModal={showModal}
-        closeModal={() => {
-          setShowModal(false);
-
-          setEditingId(null);
-        }}
-        newCategory={newCategory}
-        handleChange={handleChange}
-        saveCategory={saveCategory}
-        editingId={editingId}
-      />
-
+      {showModal && (
+        <CategoryModal
+          category={newCategory}
+          editingId={editingId}
+          handleChange={handleChange}
+          saveCategory={saveCategory}
+          closeModal={() => {
+            setShowModal(false);
+            setEditingId(null);
+          }}
+        />
+      )}
     </div>
   );
 }

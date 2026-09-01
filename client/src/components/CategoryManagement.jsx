@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
+
 import {
   FiPlus,
   FiEdit2,
@@ -10,11 +11,8 @@ import {
 
 function CategoryManagement() {
   const [categories, setCategories] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [showModal, setShowModal] = useState(false);
-
   const [editingId, setEditingId] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -32,17 +30,13 @@ function CategoryManagement() {
     try {
       setLoading(true);
 
-      const response = await axios.get(
-        "http://localhost:5000/api/categories"
-      );
+      const response = await api.get("/categories");
 
       setCategories(response.data);
-
     } catch (error) {
       console.error("Fetch Categories Error:", error);
 
       alert("Unable to load categories.");
-
     } finally {
       setLoading(false);
     }
@@ -134,13 +128,13 @@ function CategoryManagement() {
 
     try {
       if (editingId) {
-        await axios.put(
-          `http://localhost:5000/api/categories/${editingId}`,
+        await api.put(
+          `/categories/${editingId}`,
           formData
         );
       } else {
-        await axios.post(
-          "http://localhost:5000/api/categories",
+        await api.post(
+          "/categories",
           formData
         );
       }
@@ -148,13 +142,12 @@ function CategoryManagement() {
       await fetchCategories();
 
       closeModal();
-
     } catch (error) {
       console.error("Save Category Error:", error);
 
       alert(
         error.response?.data?.message ||
-        "Unable to save category."
+          "Unable to save category."
       );
     }
   };
@@ -171,18 +164,17 @@ function CategoryManagement() {
     if (!confirmed) return;
 
     try {
-      await axios.delete(
-        `http://localhost:5000/api/categories/${id}`
+      await api.delete(
+        `/categories/${id}`
       );
 
       await fetchCategories();
-
     } catch (error) {
       console.error("Delete Category Error:", error);
 
       alert(
         error.response?.data?.message ||
-        "Unable to delete category."
+          "Unable to delete category."
       );
     }
   };
@@ -221,12 +213,10 @@ function CategoryManagement() {
           onClick={openAddModal}
         >
           <FiPlus />
-
           Add Category
         </button>
 
       </div>
-
 
       {/* ======================================================
           CATEGORY LIST
@@ -255,7 +245,6 @@ function CategoryManagement() {
             className="category-empty-btn"
           >
             <FiPlus />
-
             Add Category
           </button>
 
@@ -337,7 +326,6 @@ function CategoryManagement() {
 
       )}
 
-
       {/* ======================================================
           MODAL
       ====================================================== */}
@@ -385,7 +373,6 @@ function CategoryManagement() {
 
             </div>
 
-
             {/* FORM */}
 
             <form
@@ -410,7 +397,6 @@ function CategoryManagement() {
 
               </div>
 
-
               <div className="category-form-group">
 
                 <label>
@@ -426,7 +412,6 @@ function CategoryManagement() {
                 />
 
               </div>
-
 
               <div className="category-form-row">
 
@@ -453,7 +438,6 @@ function CategoryManagement() {
 
                 </div>
 
-
                 <div className="category-form-group">
 
                   <label>
@@ -465,7 +449,6 @@ function CategoryManagement() {
                     value={formData.status}
                     onChange={handleChange}
                   >
-
                     <option value="Active">
                       Active
                     </option>
@@ -473,13 +456,11 @@ function CategoryManagement() {
                     <option value="Inactive">
                       Inactive
                     </option>
-
                   </select>
 
                 </div>
 
               </div>
-
 
               {/* FOOTER */}
 

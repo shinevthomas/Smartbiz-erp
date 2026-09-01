@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { toast } from "react-toastify";
+
 import {
   FiUser,
   FiMail,
@@ -19,10 +20,21 @@ import {
 import "./Settings.css";
 
 function Settings() {
+  // ==========================================================
+  // GET USER FROM LOCAL STORAGE
+  // ==========================================================
+
   const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
+
+  const user = storedUser
+    ? JSON.parse(storedUser)
+    : null;
 
   const userId = user?.id || user?._id;
+
+  // ==========================================================
+  // PROFILE STATE
+  // ==========================================================
 
   const [profile, setProfile] = useState({
     name: "",
@@ -35,11 +47,19 @@ function Settings() {
     theme: "light",
   });
 
+  // ==========================================================
+  // PASSWORD STATE
+  // ==========================================================
+
   const [password, setPassword] = useState({
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+
+  // ==========================================================
+  // SHOW / HIDE PASSWORD
+  // ==========================================================
 
   const [showPasswords, setShowPasswords] = useState({
     old: false,
@@ -47,8 +67,61 @@ function Settings() {
     confirm: false,
   });
 
+  // ==========================================================
+  // LOADING STATES
+  // ==========================================================
+
   const [savingProfile, setSavingProfile] = useState(false);
-  const [changingPassword, setChangingPassword] = useState(false);
+
+  const [changingPassword, setChangingPassword] =
+    useState(false);
+
+  // ==========================================================
+  // FETCH PROFILE
+  // ==========================================================
+
+  const fetchProfile = async () => {
+    if (!userId) {
+      toast.error("User information not found.");
+      return;
+    }
+
+    try {
+      const res = await api.get(
+        `/users/profile/${userId}`
+      );
+
+      setProfile({
+        name: res.data.name || "",
+        email: res.data.email || "",
+        companyName:
+          res.data.companyName || "",
+        phone: res.data.phone || "",
+        address:
+          res.data.address || "",
+        currency:
+          res.data.currency || "INR",
+        gst:
+          res.data.gst ?? 18,
+        theme:
+          res.data.theme || "light",
+      });
+    } catch (err) {
+      console.error(
+        "Fetch Profile Error:",
+        err
+      );
+
+      toast.error(
+        err.response?.data?.message ||
+          "Unable to load profile"
+      );
+    }
+  };
+
+  // ==========================================================
+  // LOAD PROFILE
+  // ==========================================================
 
   useEffect(() => {
     if (userId) {
@@ -56,48 +129,47 @@ function Settings() {
     }
   }, [userId]);
 
-  const fetchProfile = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/users/profile/${userId}`
-      );
-
-      setProfile({
-        name: res.data.name || "",
-        email: res.data.email || "",
-        companyName: res.data.companyName || "",
-        phone: res.data.phone || "",
-        address: res.data.address || "",
-        currency: res.data.currency || "INR",
-        gst: res.data.gst ?? 18,
-        theme: res.data.theme || "light",
-      });
-    } catch (err) {
-      console.log(err);
-      toast.error("Unable to load profile");
-    }
-  };
+  // ==========================================================
+  // HANDLE PROFILE CHANGE
+  // ==========================================================
 
   const handleProfileChange = (e) => {
-    setProfile({
-      ...profile,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setProfile((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
+
+  // ==========================================================
+  // HANDLE PASSWORD CHANGE
+  // ==========================================================
 
   const handlePasswordChange = (e) => {
-    setPassword({
-      ...password,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setPassword((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
+  // ==========================================================
+  // SAVE PROFILE
+  // ==========================================================
+
   const saveProfile = async () => {
+    if (!userId) {
+      toast.error("User information not found.");
+      return;
+    }
+
     setSavingProfile(true);
 
     try {
-      await axios.put(
-        `http://localhost:5000/api/users/profile/${userId}`,
+      await api.put(
+        `/users/profile/${userId}`,
         profile
       );
 
@@ -107,82 +179,147 @@ function Settings() {
         email: profile.email,
       };
 
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      localStorage.setItem(
+        "user",
+        JSON.stringify(updatedUser)
+      );
 
-      toast.success("Profile updated successfully");
+      toast.success(
+        "Profile updated successfully"
+      );
     } catch (err) {
-      console.log(err);
+      console.error(
+        "Update Profile Error:",
+        err
+      );
+
       toast.error(
-        err.response?.data?.message || "Failed to update profile"
+        err.response?.data?.message ||
+          "Failed to update profile"
       );
     } finally {
       setSavingProfile(false);
     }
   };
 
+  // ==========================================================
+  // CHANGE PASSWORD
+  // ==========================================================
+
   const changePassword = async () => {
-    if (!password.oldPassword || !password.newPassword) {
-      toast.error("Please fill all password fields");
+    if (
+      !password.oldPassword ||
+      !password.newPassword ||
+      !password.confirmPassword
+    ) {
+      toast.error(
+        "Please fill all password fields"
+      );
       return;
     }
 
     if (password.newPassword.length < 6) {
-      toast.error("New password must contain at least 6 characters");
+      toast.error(
+        "New password must contain at least 6 characters"
+      );
       return;
     }
 
-    if (password.newPassword !== password.confirmPassword) {
-      toast.error("Passwords do not match");
+    if (
+      password.newPassword !==
+      password.confirmPassword
+    ) {
+      toast.error(
+        "Passwords do not match"
+      );
+      return;
+    }
+
+    if (!userId) {
+      toast.error(
+        "User information not found."
+      );
       return;
     }
 
     setChangingPassword(true);
 
     try {
-      await axios.put(
-        `http://localhost:5000/api/users/change-password/${userId}`,
+      await api.put(
+        `/users/change-password/${userId}`,
         {
-          oldPassword: password.oldPassword,
-          newPassword: password.newPassword,
+          oldPassword:
+            password.oldPassword,
+
+          newPassword:
+            password.newPassword,
         }
       );
 
-      toast.success("Password changed successfully");
+      toast.success(
+        "Password changed successfully"
+      );
 
       setPassword({
         oldPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
+
+      setShowPasswords({
+        old: false,
+        new: false,
+        confirm: false,
+      });
     } catch (err) {
-      console.log(err);
+      console.error(
+        "Change Password Error:",
+        err
+      );
 
       toast.error(
-        err.response?.data?.message || "Password change failed"
+        err.response?.data?.message ||
+          "Password change failed"
       );
     } finally {
       setChangingPassword(false);
     }
   };
 
+  // ==========================================================
+  // TOGGLE PASSWORD
+  // ==========================================================
+
   const togglePassword = (field) => {
-    setShowPasswords({
-      ...showPasswords,
-      [field]: !showPasswords[field],
-    });
+    setShowPasswords((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
   };
+
+  // ==========================================================
+  // GET PROFILE INITIAL
+  // ==========================================================
 
   const getInitial = () => {
     if (profile.name) {
-      return profile.name.charAt(0).toUpperCase();
+      return profile.name
+        .charAt(0)
+        .toUpperCase();
     }
 
     if (profile.email) {
-      return profile.email.charAt(0).toUpperCase();
+      return profile.email
+        .charAt(0)
+        .toUpperCase();
     }
 
     return "U";
   };
+
+  // ==========================================================
+  // RETURN
+  // ==========================================================
 
   return (
     <div className="settings-page">
@@ -194,6 +331,7 @@ function Settings() {
       <div className="settings-top">
 
         <div>
+
           <span className="settings-eyebrow">
             ACCOUNT SETTINGS
           </span>
@@ -201,12 +339,13 @@ function Settings() {
           <h1>Settings</h1>
 
           <p>
-            Manage your profile, business information and account security.
+            Manage your profile, business
+            information and account security.
           </p>
+
         </div>
 
       </div>
-
 
       {/* =========================================
           PROFILE SUMMARY
@@ -228,7 +367,8 @@ function Settings() {
 
             <p>
               <FiMail />
-              {profile.email || "No email available"}
+              {profile.email ||
+                "No email available"}
             </p>
 
             <div className="profile-status">
@@ -242,7 +382,9 @@ function Settings() {
 
         <div className="profile-role">
 
-          <span>ACCOUNT ROLE</span>
+          <span>
+            ACCOUNT ROLE
+          </span>
 
           <strong>
             <FiShield />
@@ -253,13 +395,11 @@ function Settings() {
 
       </div>
 
-
       {/* =========================================
           SETTINGS CONTENT
       ========================================= */}
 
       <div className="settings-layout">
-
 
         {/* =======================================
             LEFT - PROFILE
@@ -274,14 +414,19 @@ function Settings() {
             </div>
 
             <div>
-              <h2>Personal Information</h2>
+
+              <h2>
+                Personal Information
+              </h2>
+
               <p>
-                Update your personal and business details.
+                Update your personal and
+                business details.
               </p>
+
             </div>
 
           </div>
-
 
           <div className="form-grid">
 
@@ -302,13 +447,14 @@ function Settings() {
                   name="name"
                   placeholder="Enter your name"
                   value={profile.name}
-                  onChange={handleProfileChange}
+                  onChange={
+                    handleProfileChange
+                  }
                 />
 
               </div>
 
             </div>
-
 
             {/* EMAIL */}
 
@@ -327,13 +473,14 @@ function Settings() {
                   name="email"
                   placeholder="Enter email"
                   value={profile.email}
-                  onChange={handleProfileChange}
+                  onChange={
+                    handleProfileChange
+                  }
                 />
 
               </div>
 
             </div>
-
 
             {/* COMPANY */}
 
@@ -351,14 +498,17 @@ function Settings() {
                   type="text"
                   name="companyName"
                   placeholder="Your company name"
-                  value={profile.companyName}
-                  onChange={handleProfileChange}
+                  value={
+                    profile.companyName
+                  }
+                  onChange={
+                    handleProfileChange
+                  }
                 />
 
               </div>
 
             </div>
-
 
             {/* PHONE */}
 
@@ -377,13 +527,14 @@ function Settings() {
                   name="phone"
                   placeholder="Enter phone number"
                   value={profile.phone}
-                  onChange={handleProfileChange}
+                  onChange={
+                    handleProfileChange
+                  }
                 />
 
               </div>
 
             </div>
-
 
             {/* ADDRESS */}
 
@@ -401,14 +552,15 @@ function Settings() {
                   name="address"
                   placeholder="Enter business address"
                   value={profile.address}
-                  onChange={handleProfileChange}
+                  onChange={
+                    handleProfileChange
+                  }
                   rows="4"
                 />
 
               </div>
 
             </div>
-
 
             {/* CURRENCY */}
 
@@ -425,8 +577,11 @@ function Settings() {
                 <select
                   name="currency"
                   value={profile.currency}
-                  onChange={handleProfileChange}
+                  onChange={
+                    handleProfileChange
+                  }
                 >
+
                   <option value="INR">
                     Indian Rupee (₹)
                   </option>
@@ -449,7 +604,6 @@ function Settings() {
 
             </div>
 
-
             {/* GST */}
 
             <div className="form-group">
@@ -468,7 +622,9 @@ function Settings() {
                   min="0"
                   max="100"
                   value={profile.gst}
-                  onChange={handleProfileChange}
+                  onChange={
+                    handleProfileChange
+                  }
                 />
 
                 <span className="input-suffix">
@@ -481,11 +637,11 @@ function Settings() {
 
           </div>
 
-
           <div className="card-footer">
 
             <span>
-              Changes will be applied to your ERP account.
+              Changes will be applied to
+              your ERP account.
             </span>
 
             <button
@@ -506,7 +662,6 @@ function Settings() {
 
         </div>
 
-
         {/* =======================================
             RIGHT - SECURITY
         ======================================= */}
@@ -520,30 +675,39 @@ function Settings() {
             </div>
 
             <div>
-              <h2>Account Security</h2>
+
+              <h2>
+                Account Security
+              </h2>
+
               <p>
-                Keep your account secure with a strong password.
+                Keep your account secure with
+                a strong password.
               </p>
+
             </div>
 
           </div>
-
 
           <div className="security-notice">
 
             <FiShield />
 
             <div>
-              <strong>Password Security</strong>
+
+              <strong>
+                Password Security
+              </strong>
 
               <p>
-                Use at least 6 characters with a combination
-                of letters and numbers.
+                Use at least 6 characters
+                with a combination of
+                letters and numbers.
               </p>
+
             </div>
 
           </div>
-
 
           {/* CURRENT PASSWORD */}
 
@@ -565,8 +729,12 @@ function Settings() {
                 }
                 name="oldPassword"
                 placeholder="Enter current password"
-                value={password.oldPassword}
-                onChange={handlePasswordChange}
+                value={
+                  password.oldPassword
+                }
+                onChange={
+                  handlePasswordChange
+                }
               />
 
               <button
@@ -576,16 +744,16 @@ function Settings() {
                   togglePassword("old")
                 }
               >
-                {showPasswords.old
-                  ? <FiEyeOff />
-                  : <FiEye />
-                }
+                {showPasswords.old ? (
+                  <FiEyeOff />
+                ) : (
+                  <FiEye />
+                )}
               </button>
 
             </div>
 
           </div>
-
 
           {/* NEW PASSWORD */}
 
@@ -607,8 +775,12 @@ function Settings() {
                 }
                 name="newPassword"
                 placeholder="Enter new password"
-                value={password.newPassword}
-                onChange={handlePasswordChange}
+                value={
+                  password.newPassword
+                }
+                onChange={
+                  handlePasswordChange
+                }
               />
 
               <button
@@ -618,16 +790,16 @@ function Settings() {
                   togglePassword("new")
                 }
               >
-                {showPasswords.new
-                  ? <FiEyeOff />
-                  : <FiEye />
-                }
+                {showPasswords.new ? (
+                  <FiEyeOff />
+                ) : (
+                  <FiEye />
+                )}
               </button>
 
             </div>
 
           </div>
-
 
           {/* CONFIRM PASSWORD */}
 
@@ -649,8 +821,12 @@ function Settings() {
                 }
                 name="confirmPassword"
                 placeholder="Confirm new password"
-                value={password.confirmPassword}
-                onChange={handlePasswordChange}
+                value={
+                  password.confirmPassword
+                }
+                onChange={
+                  handlePasswordChange
+                }
               />
 
               <button
@@ -660,16 +836,16 @@ function Settings() {
                   togglePassword("confirm")
                 }
               >
-                {showPasswords.confirm
-                  ? <FiEyeOff />
-                  : <FiEye />
-                }
+                {showPasswords.confirm ? (
+                  <FiEyeOff />
+                ) : (
+                  <FiEye />
+                )}
               </button>
 
             </div>
 
           </div>
-
 
           <button
             className="security-btn"
@@ -685,13 +861,13 @@ function Settings() {
 
           </button>
 
-
           <div className="security-footer">
 
             <FiShield />
 
             <span>
-              Your password is encrypted and securely stored.
+              Your password is encrypted
+              and securely stored.
             </span>
 
           </div>
@@ -700,7 +876,6 @@ function Settings() {
 
       </div>
 
-
       {/* =========================================
           BOTTOM INFORMATION
       ========================================= */}
@@ -708,16 +883,23 @@ function Settings() {
       <div className="settings-bottom">
 
         <div>
+
           <FiShield />
 
           <div>
-            <strong>Your account is protected</strong>
+
+            <strong>
+              Your account is protected
+            </strong>
 
             <p>
-              SmartBiz ERP uses secure authentication
-              to protect your business data.
+              SmartBiz ERP uses secure
+              authentication to protect
+              your business data.
             </p>
+
           </div>
+
         </div>
 
         <span>

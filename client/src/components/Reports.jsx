@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Reports.css";
 import SalesChart from "./SalesChart";
 
@@ -8,8 +8,23 @@ import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-function Reports() {
+import {
+  FiBarChart2,
+  FiBox,
+  FiUsers,
+  FiShoppingCart,
+  FiFileText,
+  FiDollarSign,
+  FiDownload,
+  FiFile,
+  FiTrendingUp,
+  FiPackage,
+  FiClock,
+  FiArrowUpRight,
+  FiRefreshCw,
+} from "react-icons/fi";
 
+function Reports() {
   const [report, setReport] = useState({
     totalProducts: 0,
     totalCustomers: 0,
@@ -20,288 +35,794 @@ function Reports() {
     latestSales: [],
   });
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchReport();
   }, []);
 
   const fetchReport = async () => {
     try {
+      setLoading(true);
 
-      const res = await axios.get(
-        "http://localhost:5000/api/reports"
-      );
+      const res = await api.get("/reports");
 
       setReport(res.data);
-
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  /* ===========================
-      EXPORT FUNCTIONS
-      (Part 2 continues here)
-  =========================== */
-// ===========================
-// EXPORT TO EXCEL
-// ===========================
-const exportExcel = () => {
-  const data = report.latestSales.map((sale) => ({
-    Customer: sale.customerName,
-    Product: sale.product?.name || sale.product,
-    Quantity: sale.quantity,
-    Total: sale.totalAmount,
-  }));
+  // =========================================================
+  // EXPORT EXCEL
+  // =========================================================
 
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
+  const exportExcel = () => {
+    const data = report.latestSales.map((sale) => ({
+      Customer: sale.customerName,
+      Product: sale.product?.name || sale.product,
+      Quantity: sale.quantity,
+      Total: sale.totalAmount,
+    }));
 
-  XLSX.utils.book_append_sheet(
-    workbook,
-    worksheet,
-    "Sales Report"
-  );
+    const worksheet = XLSX.utils.json_to_sheet(data);
 
-  const excelBuffer = XLSX.write(workbook, {
-    bookType: "xlsx",
-    type: "array",
-  });
+    const workbook = XLSX.utils.book_new();
 
-  const fileData = new Blob([excelBuffer], {
-    type: "application/octet-stream",
-  });
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Sales Report"
+    );
 
-  saveAs(fileData, "Sales_Report.xlsx");
-};
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
 
-// ===========================
-// EXPORT TO PDF
-// ===========================
-const exportPDF = () => {
-  const doc = new jsPDF();
+    const fileData = new Blob([excelBuffer], {
+      type: "application/octet-stream",
+    });
 
-  doc.setFontSize(18);
-  doc.text("SmartBiz ERP Report", 14, 18);
+    saveAs(fileData, "Sales_Report.xlsx");
+  };
 
-  autoTable(doc, {
-    startY: 30,
-    head: [["Customer", "Product", "Qty", "Total"]],
-    body: report.latestSales.map((sale) => [
-      sale.customerName,
-      sale.product?.name || sale.product,
-      sale.quantity,
-      "₹" + Number(sale.totalAmount).toLocaleString("en-IN"),
-    ]),
-  });
+  // =========================================================
+  // EXPORT PDF
+  // =========================================================
 
-  doc.save("Sales_Report.pdf");
-};
+  const exportPDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+
+    doc.text(
+      "SmartBiz ERP Report",
+      14,
+      18
+    );
+
+    autoTable(doc, {
+      startY: 30,
+
+      head: [
+        [
+          "Customer",
+          "Product",
+          "Qty",
+          "Total",
+        ],
+      ],
+
+      body: report.latestSales.map(
+        (sale) => [
+          sale.customerName,
+          sale.product?.name ||
+            sale.product,
+          sale.quantity,
+          "₹" +
+            Number(
+              sale.totalAmount
+            ).toLocaleString("en-IN"),
+        ]
+      ),
+    });
+
+    doc.save("Sales_Report.pdf");
+  };
+
+  // =========================================================
+  // FORMAT CURRENCY
+  // =========================================================
+
+  const formatCurrency = (value) => {
+    return `₹${Number(value || 0).toLocaleString(
+      "en-IN"
+    )}`;
+  };
+
+  // =========================================================
+  // RETURN
+  // =========================================================
+
   return (
-
     <div className="reports-container">
 
-      <h1>Reports Dashboard</h1>
+      {/* =====================================================
+          PAGE HEADER
+      ===================================================== */}
 
-      {/* SUMMARY CARDS */}
+      <div className="reports-page-header">
 
-      <div className="cards">
+        <div className="reports-title-area">
 
-        <div className="card">
-          <h3>Products</h3>
-          <h2>{report.totalProducts}</h2>
+          <div className="reports-title-icon">
+            <FiBarChart2 />
+          </div>
+
+          <div>
+
+            <div className="reports-eyebrow">
+              BUSINESS INTELLIGENCE
+            </div>
+
+            <h1>
+              Reports & Analytics
+            </h1>
+
+            <p>
+              Monitor your business performance,
+              sales activity and inventory insights.
+            </p>
+
+          </div>
+
         </div>
 
-        <div className="card">
-          <h3>Customers</h3>
-          <h2>{report.totalCustomers}</h2>
-        </div>
 
-        <div className="card">
-          <h3>Sales</h3>
-          <h2>{report.totalSales}</h2>
-        </div>
+        <div className="reports-header-actions">
 
-        <div className="card">
-          <h3>Invoices</h3>
-          <h2>{report.totalInvoices}</h2>
+          <button
+            className="refresh-report-btn"
+            onClick={fetchReport}
+            title="Refresh reports"
+          >
+            <FiRefreshCw />
+
+            Refresh
+          </button>
+
+          <button
+            className="excel-btn"
+            onClick={exportExcel}
+          >
+            <FiDownload />
+
+            Excel
+          </button>
+
+          <button
+            className="pdf-btn"
+            onClick={exportPDF}
+          >
+            <FiFile />
+
+            PDF
+          </button>
+
         </div>
 
       </div>
 
-      {/* EXPORT BUTTONS */}
 
-      <div className="report-buttons">
+      {/* =====================================================
+          KPI CARDS
+      ===================================================== */}
 
-        <button onClick={exportExcel}>
-          📗 Export Excel
-        </button>
+      <div className="reports-kpi-grid">
 
-        <button onClick={exportPDF}>
-          📄 Export PDF
-        </button>
+        {/* PRODUCTS */}
+
+        <div className="reports-kpi-card">
+
+          <div className="kpi-top">
+
+            <div className="kpi-icon blue">
+              <FiBox />
+            </div>
+
+            <span className="kpi-trend">
+              <FiArrowUpRight />
+              Active
+            </span>
+
+          </div>
+
+          <div className="kpi-label">
+            Total Products
+          </div>
+
+          <div className="kpi-value">
+            {report.totalProducts}
+          </div>
+
+          <div className="kpi-footer">
+            <FiPackage />
+            Products in inventory
+          </div>
+
+        </div>
+
+
+        {/* CUSTOMERS */}
+
+        <div className="reports-kpi-card">
+
+          <div className="kpi-top">
+
+            <div className="kpi-icon purple">
+              <FiUsers />
+            </div>
+
+            <span className="kpi-trend">
+              <FiArrowUpRight />
+              Active
+            </span>
+
+          </div>
+
+          <div className="kpi-label">
+            Total Customers
+          </div>
+
+          <div className="kpi-value">
+            {report.totalCustomers}
+          </div>
+
+          <div className="kpi-footer">
+            <FiUsers />
+            Registered customers
+          </div>
+
+        </div>
+
+
+        {/* SALES */}
+
+        <div className="reports-kpi-card">
+
+          <div className="kpi-top">
+
+            <div className="kpi-icon orange">
+              <FiShoppingCart />
+            </div>
+
+            <span className="kpi-trend positive">
+              <FiTrendingUp />
+              Sales
+            </span>
+
+          </div>
+
+          <div className="kpi-label">
+            Total Sales
+          </div>
+
+          <div className="kpi-value">
+            {report.totalSales}
+          </div>
+
+          <div className="kpi-footer">
+            <FiShoppingCart />
+            Completed transactions
+          </div>
+
+        </div>
+
+
+        {/* INVOICES */}
+
+        <div className="reports-kpi-card">
+
+          <div className="kpi-top">
+
+            <div className="kpi-icon green">
+              <FiFileText />
+            </div>
+
+            <span className="kpi-trend positive">
+              <FiTrendingUp />
+              Updated
+            </span>
+
+          </div>
+
+          <div className="kpi-label">
+            Total Invoices
+          </div>
+
+          <div className="kpi-value">
+            {report.totalInvoices}
+          </div>
+
+          <div className="kpi-footer">
+            <FiFileText />
+            Generated invoices
+          </div>
+
+        </div>
 
       </div>
 
-      {/* BAR CHART */}
 
-      <div className="chart-card">
+      {/* =====================================================
+          REVENUE + QUICK INSIGHT
+      ===================================================== */}
 
-        <SalesChart report={report} />
+      <div className="reports-overview-grid">
+
+        <div className="revenue-panel">
+
+          <div className="revenue-panel-header">
+
+            <div>
+
+              <div className="panel-eyebrow">
+                FINANCIAL OVERVIEW
+              </div>
+
+              <h2>
+                Total Revenue
+              </h2>
+
+            </div>
+
+            <div className="revenue-icon">
+              <FiDollarSign />
+            </div>
+
+          </div>
+
+
+          <div className="revenue-value">
+            {formatCurrency(
+              report.totalRevenue
+            )}
+          </div>
+
+
+          <div className="revenue-meta">
+
+            <span className="revenue-positive">
+              <FiTrendingUp />
+              Business Revenue
+            </span>
+
+            <span>
+              Based on recorded sales
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div className="insight-panel">
+
+          <div className="insight-header">
+
+            <div className="insight-icon">
+              <FiBarChart2 />
+            </div>
+
+            <div>
+
+              <h3>
+                Sales Overview
+              </h3>
+
+              <p>
+                Current business activity
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div className="insight-stat">
+
+            <span>
+              Sales Transactions
+            </span>
+
+            <strong>
+              {report.totalSales}
+            </strong>
+
+          </div>
+
+
+          <div className="insight-stat">
+
+            <span>
+              Invoices Generated
+            </span>
+
+            <strong>
+              {report.totalInvoices}
+            </strong>
+
+          </div>
+
+
+          <div className="insight-stat">
+
+            <span>
+              Customers
+            </span>
+
+            <strong>
+              {report.totalCustomers}
+            </strong>
+
+          </div>
+
+        </div>
 
       </div>
 
-      {/* REVENUE */}
 
-      <div className="revenue-card">
+      {/* =====================================================
+          SALES ANALYTICS
+      ===================================================== */}
 
-        <h2>Total Revenue</h2>
+      <div className="reports-section">
 
-        <h1>
-          ₹{Number(report.totalRevenue).toLocaleString("en-IN")}
-        </h1>
+        <div className="section-header">
+
+          <div className="section-title">
+
+            <div className="section-icon">
+              <FiTrendingUp />
+            </div>
+
+            <div>
+
+              <h2>
+                Sales Analytics
+              </h2>
+
+              <p>
+                Visual overview of your sales performance
+              </p>
+
+            </div>
+
+          </div>
+
+          <span className="live-indicator">
+            <span></span>
+            Live Data
+          </span>
+
+        </div>
+
+
+        <div className="sales-chart-wrapper">
+
+          {loading ? (
+
+            <div className="reports-loading">
+              Loading analytics...
+            </div>
+
+          ) : (
+
+            <SalesChart
+              report={report}
+            />
+
+          )}
+
+        </div>
 
       </div>
 
-      {/* TABLES */}
 
-      <div className="tables">
+      {/* =====================================================
+          DATA TABLES
+      ===================================================== */}
 
-        {/* BEST PRODUCTS */}
+      <div className="reports-tables-grid">
 
-        <div className="table-box">
+        {/* ===================================================
+            BEST PRODUCTS
+        =================================================== */}
 
-          <h2>🔥 Best Selling Products</h2>
+        <div className="reports-table-panel">
 
-          <table>
+          <div className="table-panel-header">
 
-            <thead>
+            <div>
 
-              <tr>
+              <div className="table-panel-icon">
+                <FiPackage />
+              </div>
 
-                <th>#</th>
+            </div>
 
-              <th>Product</th>
+            <div className="table-panel-title">
 
-                <th>Quantity Sold</th>
+              <h2>
+                Best Selling Products
+              </h2>
 
-              </tr>
+              <p>
+                Top performing products
+              </p>
 
-            </thead>
+            </div>
 
-            <tbody>
+            <span className="table-count">
+              {report.bestProducts.length}
+            </span>
 
-              {report.bestProducts.length > 0 ? (
+          </div>
 
-                report.bestProducts.map((item, index) => (
 
-                  <tr key={item._id}>
+          <div className="table-scroll">
 
-                    <td>{index + 1}</td>
-<td>{item.productName}</td>
+            <table className="professional-table">
 
-                    <td>{item.totalSold}</td>
-
-                  </tr>
-
-                ))
-
-              ) : (
+              <thead>
 
                 <tr>
-
-                  <td colSpan="3">
-
-                    No Data Found
-
-                  </td>
-
+                  <th>#</th>
+                  <th>Product</th>
+                  <th>Quantity Sold</th>
                 </tr>
 
-              )}
+              </thead>
 
-            </tbody>
+              <tbody>
 
-          </table>
+                {report.bestProducts.length >
+                0 ? (
 
-        </div>
+                  report.bestProducts.map(
+                    (item, index) => (
 
-        {/* LATEST SALES */}
+                      <tr key={item._id}>
 
-        <div className="table-box">
+                        <td>
+                          <span className="rank-number">
+                            {String(
+                              index + 1
+                            ).padStart(2, "0")}
+                          </span>
+                        </td>
 
-          <h2>🛒 Latest Sales</h2>
+                        <td>
 
-          <table>
+                          <div className="product-cell">
 
-            <thead>
+                            <div className="product-avatar">
+                              <FiPackage />
+                            </div>
 
-              <tr>
+                            <strong>
+                              {
+                                item.productName
+                              }
+                            </strong>
 
-                <th>Customer</th>
+                          </div>
 
-                <th>Product</th>
+                        </td>
 
-                <th>Qty</th>
+                        <td>
 
-                <th>Total</th>
+                          <span className="quantity-badge">
+                            {
+                              item.totalSold
+                            }
+                          </span>
 
-              </tr>
+                        </td>
 
-            </thead>
+                      </tr>
 
-            <tbody>
+                    )
+                  )
 
-              {report.latestSales.length > 0 ? (
+                ) : (
 
-                report.latestSales.map((sale) => (
+                  <tr>
 
-                  <tr key={sale._id}>
-
-                    <td>{sale.customerName}</td>
-
-                    <td>{sale.product?.name}</td>
-
-                    <td>{sale.quantity}</td>
-
-                    <td>
-
-                      ₹
-                      {Number(
-                        sale.totalAmount
-                      ).toLocaleString("en-IN")}
-
+                    <td
+                      colSpan="3"
+                      className="empty-cell"
+                    >
+                      No product data available
                     </td>
 
                   </tr>
 
-                ))
+                )}
 
-              ) : (
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+
+        {/* ===================================================
+            LATEST SALES
+        =================================================== */}
+
+        <div className="reports-table-panel">
+
+          <div className="table-panel-header">
+
+            <div>
+
+              <div className="table-panel-icon sales">
+                <FiShoppingCart />
+              </div>
+
+            </div>
+
+            <div className="table-panel-title">
+
+              <h2>
+                Latest Sales
+              </h2>
+
+              <p>
+                Most recent transactions
+              </p>
+
+            </div>
+
+            <span className="table-count">
+              {report.latestSales.length}
+            </span>
+
+          </div>
+
+
+          <div className="table-scroll">
+
+            <table className="professional-table">
+
+              <thead>
 
                 <tr>
-
-                  <td colSpan="4">
-
-                    No Data Found
-
-                  </td>
-
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Total</th>
                 </tr>
 
-              )}
+              </thead>
 
-            </tbody>
+              <tbody>
 
-          </table>
+                {report.latestSales.length >
+                0 ? (
+
+                  report.latestSales.map(
+                    (sale) => (
+
+                      <tr key={sale._id}>
+
+                        <td>
+
+                          <div className="customer-cell">
+
+                            <div className="customer-avatar">
+                              {sale.customerName
+                                ?.charAt(0)
+                                ?.toUpperCase()}
+                            </div>
+
+                            <strong>
+                              {
+                                sale.customerName
+                              }
+                            </strong>
+
+                          </div>
+
+                        </td>
+
+                        <td>
+                          <span className="product-name">
+                            {sale.product?.name ||
+                              sale.product}
+                          </span>
+                        </td>
+
+                        <td>
+
+                          <span className="quantity-badge">
+                            {sale.quantity}
+                          </span>
+
+                        </td>
+
+                        <td>
+
+                          <strong className="sale-amount">
+                            {formatCurrency(
+                              sale.totalAmount
+                            )}
+                          </strong>
+
+                        </td>
+
+                      </tr>
+
+                    )
+                  )
+
+                ) : (
+
+                  <tr>
+
+                    <td
+                      colSpan="4"
+                      className="empty-cell"
+                    >
+                      No recent sales available
+                    </td>
+
+                  </tr>
+
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
 
         </div>
 
       </div>
 
+
+      {/* =====================================================
+          FOOTER
+      ===================================================== */}
+
+      <div className="reports-footer">
+
+        <div>
+
+          <FiClock />
+
+          <span>
+            Report data is based on your latest
+            ERP transactions.
+          </span>
+
+        </div>
+
+        <span>
+          SmartBiz ERP • Business Intelligence
+        </span>
+
+      </div>
+
     </div>
-
   );
-
 }
 
 export default Reports;

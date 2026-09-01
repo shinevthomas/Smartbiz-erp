@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Invoices.css";
 import { generateInvoice } from "../utils/generateInvoice";
 
@@ -14,7 +14,6 @@ import {
 } from "recharts";
 
 function Invoices() {
-
   const [invoices, setInvoices] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -28,25 +27,17 @@ function Invoices() {
   // ==========================
 
   const fetchInvoices = async () => {
-
     try {
+      setLoading(true);
 
-      const res = await axios.get(
-        "http://localhost:5000/api/invoices"
-      );
+      const res = await api.get("/invoices");
 
       setInvoices(res.data);
-
     } catch (err) {
-
       console.log(err);
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   // ==========================
@@ -54,7 +45,6 @@ function Invoices() {
   // ==========================
 
   const deleteInvoice = async (id) => {
-
     const confirmDelete = window.confirm(
       "Delete this invoice permanently?"
     );
@@ -62,38 +52,28 @@ function Invoices() {
     if (!confirmDelete) return;
 
     try {
-
-      await axios.delete(
-        `http://localhost:5000/api/invoices/${id}`
-      );
+      await api.delete(`/invoices/${id}`);
 
       fetchInvoices();
-
     } catch (err) {
-
       console.log(err);
-
     }
-
   };
-    // ==========================
+
+  // ==========================
   // SEARCH
   // ==========================
 
   const filteredInvoices = useMemo(() => {
-
     return invoices.filter((invoice) => {
-
       const keyword = search.toLowerCase();
 
       return (
-        invoice.invoiceNo.toLowerCase().includes(keyword) ||
-        invoice.customerName.toLowerCase().includes(keyword) ||
-        invoice.product.toLowerCase().includes(keyword)
+        invoice.invoiceNo?.toLowerCase().includes(keyword) ||
+        invoice.customerName?.toLowerCase().includes(keyword) ||
+        invoice.product?.toLowerCase().includes(keyword)
       );
-
     });
-
   }, [search, invoices]);
 
   // ==========================
@@ -103,7 +83,7 @@ function Invoices() {
   const totalInvoices = filteredInvoices.length;
 
   const totalRevenue = filteredInvoices.reduce(
-    (sum, invoice) => sum + Number(invoice.totalAmount),
+    (sum, invoice) => sum + Number(invoice.totalAmount || 0),
     0
   );
 
@@ -112,7 +92,7 @@ function Invoices() {
   ).length;
 
   const totalProducts = filteredInvoices.reduce(
-    (sum, invoice) => sum + Number(invoice.quantity),
+    (sum, invoice) => sum + Number(invoice.quantity || 0),
     0
   );
 
@@ -123,41 +103,36 @@ function Invoices() {
   const monthlyRevenue = {};
 
   invoices.forEach((invoice) => {
-
-    const month = new Date(
-      invoice.createdAt
-    ).toLocaleString("default", {
-      month: "short",
-    });
+    const month = new Date(invoice.createdAt).toLocaleString(
+      "default",
+      {
+        month: "short",
+      }
+    );
 
     monthlyRevenue[month] =
       (monthlyRevenue[month] || 0) +
-      Number(invoice.totalAmount);
-
+      Number(invoice.totalAmount || 0);
   });
 
-  const chartData = Object.keys(monthlyRevenue).map(
-    (month) => ({
-      month,
-      revenue: monthlyRevenue[month],
-    })
-  );
+  const chartData = Object.keys(monthlyRevenue).map((month) => ({
+    month,
+    revenue: monthlyRevenue[month],
+  }));
 
   // ==========================
   // LOADING
   // ==========================
 
   if (loading) {
-
     return (
       <div className="invoice-loading">
         <h2>Loading Invoices...</h2>
       </div>
     );
-
   }
-    return (
 
+  return (
     <div className="invoice-page">
 
       {/* ========================= */}
@@ -167,13 +142,11 @@ function Invoices() {
       <div className="invoice-header">
 
         <div>
-
           <h1>Invoice Management</h1>
 
           <p>
             Manage, search, print and download customer invoices.
           </p>
-
         </div>
 
         <button
@@ -198,6 +171,7 @@ function Invoices() {
 
         <div className="invoice-card">
           <span>Total Revenue</span>
+
           <h2>
             ₹{Number(totalRevenue).toLocaleString("en-IN")}
           </h2>
@@ -265,7 +239,8 @@ function Invoices() {
         </ResponsiveContainer>
 
       </div>
-            {/* ========================= */}
+
+      {/* ========================= */}
       {/* SEARCH BAR */}
       {/* ========================= */}
 
@@ -290,157 +265,191 @@ function Invoices() {
         <table className="invoice-table">
 
           <thead>
-
             <tr>
-
               <th>#</th>
-
               <th>Invoice No</th>
-
               <th>Customer</th>
-
               <th>Product</th>
-
               <th>Qty</th>
-
               <th>Price</th>
-
               <th>Total</th>
-
               <th>Status</th>
-
               <th>Date</th>
-
               <th>Actions</th>
-
             </tr>
-
           </thead>
 
-          <tbody>          {filteredInvoices.length > 0 ? (
+          <tbody>
 
-            filteredInvoices.map((invoice, index) => (
+            {filteredInvoices.length > 0 ? (
 
-              <tr key={invoice._id}>
+              filteredInvoices.map((invoice, index) => (
 
-                <td>{index + 1}</td>
+                <tr key={invoice._id}>
 
-                <td>
-                  <strong>{invoice.invoiceNo}</strong>
-                </td>
+                  <td>{index + 1}</td>
 
-                <td>{invoice.customerName}</td>
+                  <td>
+                    <strong>
+                      {invoice.invoiceNo}
+                    </strong>
+                  </td>
 
-                <td>{invoice.product}</td>
+                  <td>
+                    {invoice.customerName}
+                  </td>
 
-                <td>{invoice.quantity}</td>
+                  <td>
+                    {invoice.product}
+                  </td>
 
-                <td>
-                  ₹{Number(invoice.price).toLocaleString("en-IN")}
-                </td>
+                  <td>
+                    {invoice.quantity}
+                  </td>
 
-                <td>
-                  <strong>
-                    ₹{Number(invoice.totalAmount).toLocaleString("en-IN")}
-                  </strong>
-                </td>
+                  <td>
+                    ₹
+                    {Number(
+                      invoice.price || 0
+                    ).toLocaleString("en-IN")}
+                  </td>
 
-                <td>
+                  <td>
+                    <strong>
+                      ₹
+                      {Number(
+                        invoice.totalAmount || 0
+                      ).toLocaleString("en-IN")}
+                    </strong>
+                  </td>
 
-                  <span
-                    className={
-                      invoice.status === "Paid"
-                        ? "status paid"
-                        : "status pending"
-                    }
-                  >
-                    {invoice.status}
-                  </span>
+                  <td>
 
-                </td>
-
-                <td>
-                  {new Date(
-                    invoice.createdAt
-                  ).toLocaleDateString("en-IN")}
-                </td>
-
-                <td>
-
-                  <div className="action-buttons">
-
-                    <button
-                      className="pdf-btn"
-                      onClick={() =>
-                        generateInvoice({
-                          invoiceNumber: invoice.invoiceNo,
-                          customerName: invoice.customerName,
-                          productName: invoice.product,
-                          quantity: invoice.quantity,
-                          price: Number(invoice.price),
-                          total: Number(invoice.totalAmount),
-                          status: invoice.status,
-                          createdAt: invoice.createdAt,
-                        })
+                    <span
+                      className={
+                        invoice.status === "Paid"
+                          ? "status paid"
+                          : "status pending"
                       }
                     >
-                      📄 PDF
-                    </button>
+                      {invoice.status}
+                    </span>
 
-                    <button
-                      className="print-btn"
-                      onClick={() => window.print()}
-                    >
-                      🖨 Print
-                    </button>
+                  </td>
 
-                    <button
-                      className="delete-btn"
-                      onClick={() =>
-                        deleteInvoice(invoice._id)
-                      }
-                    >
-                      🗑 Delete
-                    </button>
+                  <td>
+                    {new Date(
+                      invoice.createdAt
+                    ).toLocaleDateString("en-IN")}
+                  </td>
 
-                  </div>
+                  <td>
+
+                    <div className="action-buttons">
+
+                      {/* PDF */}
+
+                      <button
+                        className="pdf-btn"
+                        onClick={() =>
+                          generateInvoice({
+                            invoiceNumber:
+                              invoice.invoiceNo,
+
+                            customerName:
+                              invoice.customerName,
+
+                            productName:
+                              invoice.product,
+
+                            quantity:
+                              invoice.quantity,
+
+                            price:
+                              Number(
+                                invoice.price || 0
+                              ),
+
+                            total:
+                              Number(
+                                invoice.totalAmount || 0
+                              ),
+
+                            status:
+                              invoice.status,
+
+                            createdAt:
+                              invoice.createdAt,
+                          })
+                        }
+                      >
+                        📄 PDF
+                      </button>
+
+                      {/* PRINT */}
+
+                      <button
+                        className="print-btn"
+                        onClick={() =>
+                          window.print()
+                        }
+                      >
+                        🖨 Print
+                      </button>
+
+                      {/* DELETE */}
+
+                      <button
+                        className="delete-btn"
+                        onClick={() =>
+                          deleteInvoice(
+                            invoice._id
+                          )
+                        }
+                      >
+                        🗑 Delete
+                      </button>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              ))
+
+            ) : (
+
+              <tr>
+
+                <td
+                  colSpan="10"
+                  className="empty-table"
+                >
+
+                  <h3>
+                    No Invoices Found
+                  </h3>
+
+                  <p>
+                    Create your first sale to
+                    generate invoices.
+                  </p>
 
                 </td>
 
               </tr>
 
-            ))
+            )}
 
-          ) : (
-
-            <tr>
-
-              <td
-                colSpan="10"
-                className="empty-table"
-              >
-
-                <h3>No Invoices Found</h3>
-
-                <p>
-                  Create your first sale to generate invoices.
-                </p>
-
-              </td>
-
-            </tr>
-
-          )}
-                    </tbody>
+          </tbody>
 
         </table>
 
       </div>
 
     </div>
-
   );
-
 }
 
 export default Invoices;

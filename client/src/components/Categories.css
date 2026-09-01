@@ -1,0 +1,45 @@
+/* categories.css */
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.categories__item {
+  width: calc(25% - 1rem);
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.categories__item a {
+  display: block;
+  padding: 1rem;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.categories__item a:hover {
+  background-color: #f0f0f0;
+}
+
+.categories__item img {
+  width: 100%;
+  height: auto;
+}
+
+.categories__item h3 {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.categories__item p {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}

@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import api from "../api";
 import "./Customers.css";
 
 function Customers() {
   const [customers, setCustomers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const [formData, setFormData] = useState({
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+
+  const [newCustomer, setNewCustomer] = useState({
     name: "",
-    email: "",
     phone: "",
+    email: "",
     address: "",
-    company: "",
   });
 
-  const [editingId, setEditingId] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  // ===============================
+  // ==========================================================
   // FETCH CUSTOMERS
-  // ===============================
+  // ==========================================================
 
   const fetchCustomers = async () => {
     try {
@@ -29,369 +29,385 @@ function Customers() {
 
       setCustomers(res.data);
     } catch (err) {
-      console.error(err);
-      toast.error("Unable to load customers");
+      console.error("Fetch Customers Error:", err);
+
+      alert(
+        err.response?.data?.message ||
+          "Unable to load customers."
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // ==========================================================
+  // LOAD CUSTOMERS
+  // ==========================================================
+
   useEffect(() => {
     fetchCustomers();
   }, []);
 
-  // ===============================
-  // INPUT CHANGE
-  // ===============================
+  // ==========================================================
+  // HANDLE INPUT
+  // ==========================================================
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+
+    setNewCustomer((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // ==========================================================
+  // RESET FORM
+  // ==========================================================
+
+  const resetForm = () => {
+    setNewCustomer({
+      name: "",
+      phone: "",
+      email: "",
+      address: "",
     });
+
+    setEditingId(null);
   };
 
-  // ===============================
-  // SAVE CUSTOMER
-  // ===============================
+  // ==========================================================
+  // SAVE / UPDATE CUSTOMER
+  // ==========================================================
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (editingId) {
-        await api.put(`/customers/${editingId}`, formData);
-
-        toast.success("Customer updated successfully");
-      } else {
-        await api.post("/customers", formData);
-
-        toast.success("Customer added successfully");
-      }
-
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
-        company: "",
-      });
-
-      setEditingId(null);
-
-      fetchCustomers();
-    } catch (err) {
-      console.error(err);
-
-      toast.error(
-        err.response?.data?.message || "Failed to save customer"
-      );
-    }
-  };
-
-  // ===============================
-  // EDIT CUSTOMER
-  // ===============================
-
-  const handleEdit = (customer) => {
-    setEditingId(customer._id);
-
-    setFormData({
-      name: customer.name || "",
-      email: customer.email || "",
-      phone: customer.phone || "",
-      address: customer.address || "",
-      company: customer.company || "",
-    });
-  };
-
-  // ===============================
-  // DELETE CUSTOMER
-  // ===============================
-
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this customer?"
-    );
-
-    if (!confirmed) {
+  const saveCustomer = async () => {
+    if (
+      !newCustomer.name.trim() ||
+      !newCustomer.phone.trim() ||
+      !newCustomer.email.trim() ||
+      !newCustomer.address.trim()
+    ) {
+      alert("Please fill all fields.");
       return;
     }
 
     try {
-      await api.delete(`/customers/${id}`);
+      if (editingId === null) {
+        // ADD CUSTOMER
+        await api.post(
+          "/customers",
+          newCustomer
+        );
 
-      toast.success("Customer deleted successfully");
+        alert("✅ Customer Added Successfully");
+      } else {
+        // UPDATE CUSTOMER
+        await api.put(
+          `/customers/${editingId}`,
+          newCustomer
+        );
 
-      fetchCustomers();
+        alert("✅ Customer Updated Successfully");
+      }
+
+      await fetchCustomers();
+
+      resetForm();
+
+      setShowForm(false);
     } catch (err) {
-      console.error(err);
+      console.error("Save Customer Error:", err);
 
-      toast.error(
-        err.response?.data?.message || "Failed to delete customer"
+      alert(
+        err.response?.data?.message ||
+          "Unable to save customer."
       );
     }
   };
 
-  // ===============================
-  // CANCEL EDIT
-  // ===============================
+  // ==========================================================
+  // EDIT CUSTOMER
+  // ==========================================================
 
-  const handleCancel = () => {
-    setEditingId(null);
+  const editCustomer = (customer) => {
+    setEditingId(customer._id);
 
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      company: "",
+    setNewCustomer({
+      name: customer.name || "",
+      phone: customer.phone || "",
+      email: customer.email || "",
+      address: customer.address || "",
     });
+
+    setShowForm(true);
   };
 
-  return (
-    <div className="customers-page">
+  // ==========================================================
+  // DELETE CUSTOMER
+  // ==========================================================
 
-      {/* ================= HEADER ================= */}
+  const deleteCustomer = async (id) => {
+    const confirmed = window.confirm(
+      "Delete this customer?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await api.delete(
+        `/customers/${id}`
+      );
+
+      await fetchCustomers();
+
+      alert("🗑 Customer Deleted");
+    } catch (err) {
+      console.error("Delete Customer Error:", err);
+
+      alert(
+        err.response?.data?.message ||
+          "Unable to delete customer."
+      );
+    }
+  };
+
+  // ==========================================================
+  // FILTER CUSTOMERS
+  // ==========================================================
+
+  const filteredCustomers = customers.filter(
+    (customer) => {
+      const keyword = search.toLowerCase();
+
+      return (
+        customer.name
+          ?.toLowerCase()
+          .includes(keyword) ||
+        customer.phone
+          ?.toLowerCase()
+          .includes(keyword) ||
+        customer.email
+          ?.toLowerCase()
+          .includes(keyword)
+      );
+    }
+  );
+
+  // ==========================================================
+  // LOADING
+  // ==========================================================
+
+  if (loading) {
+    return (
+      <div className="customers-container">
+        <h2 style={{ textAlign: "center" }}>
+          Loading Customers...
+        </h2>
+      </div>
+    );
+  }
+
+  // ==========================================================
+  // RETURN
+  // ==========================================================
+
+  return (
+    <div className="customers-container">
+
+      {/* ==========================
+          HEADER
+      ========================== */}
 
       <div className="customers-header">
 
-        <div>
-          <h1>Customers</h1>
+        <h1>Customer Management</h1>
 
-          <p>
-            Manage your customers and business relationships
-          </p>
-        </div>
-
-        <div className="customer-count">
-          <strong>{customers.length}</strong>
-          <span>Total Customers</span>
-        </div>
-
-      </div>
-
-      {/* ================= FORM ================= */}
-
-      <div className="customer-form-card">
-
-        <h2>
-          {editingId ? "Edit Customer" : "Add New Customer"}
-        </h2>
-
-        <form onSubmit={handleSubmit}>
-
-          <div className="customer-form-grid">
-
-            <div className="form-group">
-              <label>Customer Name</label>
-
-              <input
-                type="text"
-                name="name"
-                placeholder="Enter customer name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Email</label>
-
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Phone</label>
-
-              <input
-                type="text"
-                name="phone"
-                placeholder="Enter phone number"
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Company</label>
-
-              <input
-                type="text"
-                name="company"
-                placeholder="Enter company name"
-                value={formData.company}
-                onChange={handleChange}
-              />
-            </div>
-
-          </div>
-
-          <div className="form-group">
-
-            <label>Address</label>
-
-            <textarea
-              name="address"
-              placeholder="Enter customer address"
-              value={formData.address}
-              onChange={handleChange}
-              rows="3"
-            />
-
-          </div>
-
-          <div className="customer-form-actions">
-
-            <button
-              type="submit"
-              className="customer-save-btn"
-            >
-              {editingId
-                ? "Update Customer"
-                : "Add Customer"}
-            </button>
-
-            {editingId && (
-              <button
-                type="button"
-                className="customer-cancel-btn"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-            )}
-
-          </div>
-
-        </form>
+        <button
+          className="add-btn"
+          onClick={() => {
+            if (showForm) {
+              resetForm();
+              setShowForm(false);
+            } else {
+              resetForm();
+              setShowForm(true);
+            }
+          }}
+        >
+          {showForm
+            ? "Close Form"
+            : "+ Add Customer"}
+        </button>
 
       </div>
 
-      {/* ================= TABLE ================= */}
+      {/* ==========================
+          SEARCH
+      ========================== */}
 
-      <div className="customers-table-card">
+      <input
+        type="text"
+        className="search-box"
+        placeholder="Search customer..."
+        value={search}
+        onChange={(e) =>
+          setSearch(e.target.value)
+        }
+      />
 
-        <div className="table-header">
+      {/* ==========================
+          CUSTOMER COUNT
+      ========================== */}
 
-          <div>
-            <h2>Customer List</h2>
+      <h3 className="customer-count">
+        Total Customers :{" "}
+        {filteredCustomers.length}
+      </h3>
 
-            <p>
-              View and manage all your customers
-            </p>
-          </div>
+      {/* ==========================
+          CUSTOMER FORM
+      ========================== */}
+
+      {showForm && (
+        <div className="form-container">
+
+          <input
+            type="text"
+            name="name"
+            placeholder="Customer Name"
+            value={newCustomer.name}
+            onChange={handleChange}
+          />
+
+          <input
+            type="text"
+            name="phone"
+            placeholder="Phone"
+            value={newCustomer.phone}
+            onChange={handleChange}
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={newCustomer.email}
+            onChange={handleChange}
+          />
+
+          <textarea
+            name="address"
+            placeholder="Address"
+            value={newCustomer.address}
+            onChange={handleChange}
+          />
+
+          <button onClick={saveCustomer}>
+            {editingId
+              ? "Update Customer"
+              : "Save Customer"}
+          </button>
 
         </div>
+      )}
 
-        {loading ? (
-          <div className="customers-loading">
-            Loading customers...
-          </div>
-        ) : customers.length === 0 ? (
-          <div className="customers-empty">
-            <h3>No customers found</h3>
+      {/* ==========================
+          CUSTOMER TABLE
+      ========================== */}
 
-            <p>
-              Add your first customer using the form above.
-            </p>
-          </div>
-        ) : (
-          <div className="table-wrapper">
+      <table className="customers-table">
 
-            <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-              <thead>
+        <tbody>
 
-                <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Company</th>
-                  <th>Address</th>
-                  <th>Actions</th>
+          {filteredCustomers.length > 0 ? (
+
+            filteredCustomers.map(
+              (customer, index) => (
+
+                <tr key={customer._id}>
+
+                  <td>
+                    {index + 1}
+                  </td>
+
+                  <td>
+                    {customer.name}
+                  </td>
+
+                  <td>
+                    {customer.phone}
+                  </td>
+
+                  <td>
+                    {customer.email}
+                  </td>
+
+                  <td>
+                    {customer.address}
+                  </td>
+
+                  <td>
+
+                    <button
+                      className="edit-btn"
+                      onClick={() =>
+                        editCustomer(customer)
+                      }
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      className="delete-btn"
+                      onClick={() =>
+                        deleteCustomer(
+                          customer._id
+                        )
+                      }
+                    >
+                      Delete
+                    </button>
+
+                  </td>
+
                 </tr>
 
-              </thead>
+              )
+            )
 
-              <tbody>
+          ) : (
 
-                {customers.map((customer, index) => (
+            <tr>
 
-                  <tr key={customer._id}>
+              <td
+                colSpan="6"
+                style={{
+                  textAlign: "center",
+                  padding: "20px",
+                  fontWeight: "bold",
+                }}
+              >
+                No Customers Found
+              </td>
 
-                    <td>
-                      {index + 1}
-                    </td>
+            </tr>
 
-                    <td>
-                      <strong>
-                        {customer.name}
-                      </strong>
-                    </td>
+          )}
 
-                    <td>
-                      {customer.email || "-"}
-                    </td>
+        </tbody>
 
-                    <td>
-                      {customer.phone || "-"}
-                    </td>
-
-                    <td>
-                      {customer.company || "-"}
-                    </td>
-
-                    <td>
-                      {customer.address || "-"}
-                    </td>
-
-                    <td>
-
-                      <div className="customer-actions">
-
-                        <button
-                          className="edit-btn"
-                          onClick={() =>
-                            handleEdit(customer)
-                          }
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          className="delete-btn"
-                          onClick={() =>
-                            handleDelete(customer._id)
-                          }
-                        >
-                          Delete
-                        </button>
-
-                      </div>
-
-                    </td>
-
-                  </tr>
-
-                ))}
-
-              </tbody>
-
-            </table>
-
-          </div>
-        )}
-
-      </div>
+      </table>
 
     </div>
   );
