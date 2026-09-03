@@ -52,20 +52,20 @@ export const getProducts = async (req, res) => {
 // =========================
 export const createProduct = async (req, res) => {
   try {
-    const {
-      name,
-      sku,
-      category,
-      supplier,
-      barcode,
-      price,
-      purchasePrice,
-      stock,
-      minimumStock,
-      description,
-      image,
-      status,
-    } = req.body;
+   const {
+  name,
+  sku,
+  category,
+  supplier,
+  barcode,
+  price,
+  purchasePrice,
+  stock,
+  minimumStock,
+  description,
+  image,
+  status,
+} = req.body || {};
 
     // Validate required fields
     if (!name?.trim()) {

@@ -1,3 +1,4 @@
+```jsx
 import "./Inventory.css";
 
 import { useEffect, useState } from "react";
@@ -105,13 +106,12 @@ function Inventory() {
         getAuthConfig()
       );
 
-      /*
-        Backend may return:
-        { products: [...] }
-
-        or directly:
-        [...]
-      */
+      // Backend returns:
+      // {
+      //   success: true,
+      //   count: ...,
+      //   products: [...]
+      // }
 
       if (Array.isArray(response.data)) {
         setProducts(response.data);
@@ -159,25 +159,7 @@ function Inventory() {
     const {
       name,
       value,
-      files,
     } = e.target;
-
-    // IMAGE UPLOAD
-
-    if (name === "image") {
-      if (files && files.length > 0) {
-        setProduct((prev) => ({
-          ...prev,
-
-          imageFile: files[0],
-
-          image:
-            URL.createObjectURL(files[0]),
-        }));
-      }
-
-      return;
-    }
 
     setProduct((prev) => ({
       ...prev,
@@ -197,6 +179,8 @@ function Inventory() {
     setProduct({
       ...emptyProduct,
     });
+
+    setError("");
 
     setShowModal(true);
   };
@@ -248,6 +232,8 @@ function Inventory() {
         item.status || "Active",
     });
 
+    setError("");
+
     setShowModal(true);
   };
 
@@ -288,134 +274,175 @@ function Inventory() {
       }
 
       // =========================================
-      // FORM DATA
+      // PREPARE JSON DATA
       // =========================================
 
-      const formData = new FormData();
+      const productData = {
+        name: product.name?.trim() || "",
 
-      formData.append(
-        "name",
-        product.name
-      );
+        sku: product.sku?.trim() || "",
 
-      formData.append(
-        "sku",
-        product.sku || ""
-      );
+        category:
+          product.category?.trim() ||
+          "General",
 
-      formData.append(
-        "category",
-        product.category
-      );
+        supplier:
+          product.supplier?.trim() || "",
 
-      formData.append(
-        "supplier",
-        product.supplier || ""
-      );
+        barcode:
+          product.barcode?.trim() || "",
 
-      formData.append(
-        "barcode",
-        product.barcode || ""
-      );
+        price:
+          product.price === ""
+            ? 0
+            : Number(product.price),
 
-      formData.append(
-        "price",
-        product.price
-      );
+        purchasePrice:
+          product.purchasePrice === ""
+            ? 0
+            : Number(product.purchasePrice),
 
-      formData.append(
-        "purchasePrice",
-        product.purchasePrice
-      );
+        stock:
+          product.stock === ""
+            ? 0
+            : Number(product.stock),
 
-      formData.append(
-        "stock",
-        product.stock
-      );
+        minimumStock:
+          product.minimumStock === ""
+            ? 10
+            : Number(product.minimumStock),
 
-      formData.append(
-        "minimumStock",
-        product.minimumStock
-      );
+        description:
+          product.description?.trim() || "",
 
-      formData.append(
-        "description",
-        product.description || ""
-      );
+        image:
+          product.image?.trim() || "",
 
-      formData.append(
-        "status",
-        product.status || "Active"
-      );
+        status:
+          product.status || "Active",
+      };
 
       // =========================================
-      // IMAGE
+      // BASIC FRONTEND VALIDATION
       // =========================================
 
-      if (product.imageFile) {
-        formData.append(
-          "image",
-          product.imageFile
+      if (!productData.name) {
+        setError(
+          "Product name is required."
         );
-      } else if (
-        editing &&
-        product.image
+
+        alert(
+          "Product name is required."
+        );
+
+        return;
+      }
+
+      if (
+        Number.isNaN(productData.price) ||
+        productData.price < 0
       ) {
-        formData.append(
-          "existingImage",
-          product.image
+        setError(
+          "Selling price must be a valid non-negative number."
         );
+
+        alert(
+          "Selling price must be a valid non-negative number."
+        );
+
+        return;
+      }
+
+      if (
+        Number.isNaN(productData.purchasePrice) ||
+        productData.purchasePrice < 0
+      ) {
+        setError(
+          "Purchase price must be a valid non-negative number."
+        );
+
+        alert(
+          "Purchase price must be a valid non-negative number."
+        );
+
+        return;
+      }
+
+      if (
+        Number.isNaN(productData.stock) ||
+        productData.stock < 0
+      ) {
+        setError(
+          "Stock must be a valid non-negative number."
+        );
+
+        alert(
+          "Stock must be a valid non-negative number."
+        );
+
+        return;
+      }
+
+      if (
+        Number.isNaN(productData.minimumStock) ||
+        productData.minimumStock < 0
+      ) {
+        setError(
+          "Minimum stock must be a valid non-negative number."
+        );
+
+        alert(
+          "Minimum stock must be a valid non-negative number."
+        );
+
+        return;
       }
 
       // =========================================
-      // UPDATE
+      // DEBUG
+      // =========================================
+
+      console.log(
+        "Sending product data:",
+        productData
+      );
+
+      // =========================================
+      // UPDATE PRODUCT
       // =========================================
 
       if (editing) {
         await api.put(
           `/products/${selectedProductId}`,
-          formData,
-          {
-            ...getAuthConfig(),
-
-            headers: {
-              ...getAuthConfig().headers,
-
-              "Content-Type":
-                "multipart/form-data",
-            },
-          }
+          productData,
+          getAuthConfig()
         );
       }
 
       // =========================================
-      // CREATE
+      // CREATE PRODUCT
       // =========================================
 
       else {
         await api.post(
           "/products",
-          formData,
-          {
-            ...getAuthConfig(),
-
-            headers: {
-              ...getAuthConfig().headers,
-
-              "Content-Type":
-                "multipart/form-data",
-            },
-          }
+          productData,
+          getAuthConfig()
         );
       }
 
       // =========================================
-      // REFRESH
+      // REFRESH PRODUCTS
       // =========================================
 
       await fetchProducts();
 
+      // =========================================
+      // CLOSE MODAL
+      // =========================================
+
       closeModal();
+
     } catch (error) {
       console.error(
         "Save Product Error:",
@@ -442,7 +469,9 @@ function Inventory() {
         "Are you sure you want to delete this product?"
       );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       setError("");
@@ -453,6 +482,7 @@ function Inventory() {
       );
 
       await fetchProducts();
+
     } catch (error) {
       console.error(
         "Delete Product Error:",
@@ -562,7 +592,8 @@ function Inventory() {
       filteredProducts =
         filteredProducts.filter(
           (item) =>
-            Number(item.stock) === 0
+            Number(item.stock) ===
+            0
         );
 
       break;
@@ -807,3 +838,4 @@ function Inventory() {
 }
 
 export default Inventory;
+```
